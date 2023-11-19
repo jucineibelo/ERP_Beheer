@@ -79,6 +79,9 @@ type
     Qry_CaixaTIPO: TStringField;
     Qry_CaixaVALOR: TFMTBCDField;
     Qry_CaixaDESCRICAO: TStringField;
+    Qry_FormaPagamento: TFDQuery;
+    Qry_FormaPagamentoID: TIntegerField;
+    Qry_FormaPagamentoDESCRICAO: TStringField;
     procedure Qry_ProdutosAfterScroll(DataSet: TDataSet);
     procedure Qry_EstoqueAfterScroll(DataSet: TDataSet);
   private

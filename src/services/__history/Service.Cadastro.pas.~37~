@@ -57,12 +57,6 @@ type
     Qry_ProdutosNCM: TStringField;
     Qry_Produtos_DetalhesESTOQUE: TFMTBCDField;
     Qry_Estoque: TFDQuery;
-    Qry_EstoqueID: TIntegerField;
-    Qry_EstoqueTIPO: TIntegerField;
-    Qry_EstoqueDATA_: TDateField;
-    Qry_EstoqueHORA: TTimeField;
-    Qry_EstoqueDESCONTO: TFMTBCDField;
-    Qry_EstoqueVLR_TOTAL: TFMTBCDField;
     Qry_Estoque_Item: TFDQuery;
     Qry_Estoque_ItemID: TIntegerField;
     Qry_Estoque_ItemID_ESTOQUE: TIntegerField;
@@ -71,6 +65,20 @@ type
     Qry_Estoque_ItemVALOR_UNITARIO: TFMTBCDField;
     Qry_Estoque_ItemDESCONTO: TFMTBCDField;
     Qry_Estoque_ItemVALOR_TOTAL: TFMTBCDField;
+    Qry_EstoqueID: TIntegerField;
+    Qry_EstoqueTIPO: TIntegerField;
+    Qry_EstoqueVENDEDOR: TIntegerField;
+    Qry_EstoqueDATA_: TDateField;
+    Qry_EstoqueHORA: TTimeField;
+    Qry_EstoqueDESCONTO: TFMTBCDField;
+    Qry_EstoqueVLR_TOTAL: TFMTBCDField;
+    Qry_Caixa: TFDQuery;
+    Qry_CaixaID: TIntegerField;
+    Qry_CaixaID_ESTOQUE: TIntegerField;
+    Qry_CaixaDATA_HORA: TSQLTimeStampField;
+    Qry_CaixaTIPO: TStringField;
+    Qry_CaixaVALOR: TFMTBCDField;
+    Qry_CaixaDESCRICAO: TStringField;
     procedure Qry_ProdutosAfterScroll(DataSet: TDataSet);
     procedure Qry_EstoqueAfterScroll(DataSet: TDataSet);
   private

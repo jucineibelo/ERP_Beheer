@@ -357,4 +357,23 @@ object ServiceCadastro: TServiceCadastro
       Size = 200
     end
   end
+  object Qry_FormaPagamento: TFDQuery
+    Connection = ServiceConexao.FDCon
+    SQL.Strings = (
+      'select * from formas_pagamento order by id')
+    Left = 200
+    Top = 336
+    object Qry_FormaPagamentoID: TIntegerField
+      AutoGenerateValue = arAutoInc
+      FieldName = 'ID'
+      Origin = 'ID'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object Qry_FormaPagamentoDESCRICAO: TStringField
+      FieldName = 'DESCRICAO'
+      Origin = 'DESCRICAO'
+      Size = 100
+    end
+  end
 end

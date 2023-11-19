@@ -1,13 +1,13 @@
 object ServiceCadastro: TServiceCadastro
   Height = 506
-  Width = 464
+  Width = 383
   object Qry_Pessoas: TFDQuery
     Active = True
     Connection = ServiceConexao.FDCon
     SQL.Strings = (
       'select * from pessoa where id =:id')
-    Left = 88
-    Top = 48
+    Left = 56
+    Top = 40
     ParamData = <
       item
         Name = 'ID'
@@ -62,8 +62,8 @@ object ServiceCadastro: TServiceCadastro
     Connection = ServiceConexao.FDCon
     SQL.Strings = (
       'select * from endereco where id = :id')
-    Left = 88
-    Top = 128
+    Left = 56
+    Top = 112
     ParamData = <
       item
         Name = 'ID'
@@ -116,8 +116,8 @@ object ServiceCadastro: TServiceCadastro
     Connection = ServiceConexao.FDCon
     SQL.Strings = (
       'select * from produtos where id = :id')
-    Left = 88
-    Top = 208
+    Left = 56
+    Top = 176
     ParamData = <
       item
         Name = 'ID'
@@ -170,8 +170,8 @@ object ServiceCadastro: TServiceCadastro
     Connection = ServiceConexao.FDCon
     SQL.Strings = (
       'select * from produtos_detalhes where id =:id')
-    Left = 224
-    Top = 208
+    Left = 176
+    Top = 176
     ParamData = <
       item
         Name = 'ID'
@@ -231,10 +231,10 @@ object ServiceCadastro: TServiceCadastro
     AfterScroll = Qry_EstoqueAfterScroll
     Connection = ServiceConexao.FDCon
     SQL.Strings = (
-      'select e.*, p.razao from estoque e'
-      'inner join pessoa p on p.id = e.vendedor ')
-    Left = 80
-    Top = 296
+      'select * from estoque'
+      '')
+    Left = 56
+    Top = 248
     object Qry_EstoqueID: TIntegerField
       AutoGenerateValue = arAutoInc
       FieldName = 'ID'
@@ -270,23 +270,16 @@ object ServiceCadastro: TServiceCadastro
       Precision = 18
       Size = 2
     end
-    object Qry_EstoqueRAZAO: TStringField
-      AutoGenerateValue = arDefault
-      FieldName = 'RAZAO'
-      Origin = 'RAZAO'
-      ProviderFlags = []
-      ReadOnly = True
-      Size = 100
-    end
   end
   object Qry_Estoque_Item: TFDQuery
     Active = True
     Connection = ServiceConexao.FDCon
     SQL.Strings = (
       'select * from estoque_item')
-    Left = 224
-    Top = 296
+    Left = 176
+    Top = 248
     object Qry_Estoque_ItemID: TIntegerField
+      AutoGenerateValue = arAutoInc
       FieldName = 'ID'
       Origin = 'ID'
       ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
@@ -323,6 +316,64 @@ object ServiceCadastro: TServiceCadastro
       Origin = 'VALOR_TOTAL'
       Precision = 18
       Size = 2
+    end
+  end
+  object Qry_Caixa: TFDQuery
+    Connection = ServiceConexao.FDCon
+    SQL.Strings = (
+      'select * from caixa')
+    Left = 56
+    Top = 336
+    object Qry_CaixaID: TIntegerField
+      AutoGenerateValue = arAutoInc
+      FieldName = 'ID'
+      Origin = 'ID'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object Qry_CaixaID_ESTOQUE: TIntegerField
+      FieldName = 'ID_ESTOQUE'
+      Origin = 'ID_ESTOQUE'
+    end
+    object Qry_CaixaDATA_HORA: TSQLTimeStampField
+      FieldName = 'DATA_HORA'
+      Origin = 'DATA_HORA'
+    end
+    object Qry_CaixaTIPO: TStringField
+      FieldName = 'TIPO'
+      Origin = 'TIPO'
+      FixedChar = True
+      Size = 1
+    end
+    object Qry_CaixaVALOR: TFMTBCDField
+      FieldName = 'VALOR'
+      Origin = 'VALOR'
+      Precision = 18
+      Size = 2
+    end
+    object Qry_CaixaDESCRICAO: TStringField
+      FieldName = 'DESCRICAO'
+      Origin = 'DESCRICAO'
+      Size = 200
+    end
+  end
+  object Qry_FormaPagamento: TFDQuery
+    Connection = ServiceConexao.FDCon
+    SQL.Strings = (
+      'select * from formas_pagamento')
+    Left = 200
+    Top = 336
+    object Qry_FormaPagamentoID: TIntegerField
+      AutoGenerateValue = arAutoInc
+      FieldName = 'ID'
+      Origin = 'ID'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object Qry_FormaPagamentoDESCRICAO: TStringField
+      FieldName = 'DESCRICAO'
+      Origin = 'DESCRICAO'
+      Size = 100
     end
   end
 end
