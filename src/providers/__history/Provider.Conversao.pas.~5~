@@ -1,0 +1,32 @@
+unit Provider.Conversao;
+
+interface
+
+uses
+  SysUtils,
+  StrUtils,
+  Classes;
+
+type
+
+  TPCPessoas = (TpCliente, TpFornecedoress, TpFuncionarios);
+
+function PessoasToInt(const ATipo: TPCPessoas): Integer;
+
+implementation
+
+function PessoasToInt(const ATipo: TPCPessoas): Integer;
+begin
+  case ATipo of
+    TpCliente:
+      Result := 1;
+
+    TpFornecedoress:
+      Result := 2;
+
+    TpFuncionarios:
+      Result := 3;
+  end;
+end;
+
+end.

@@ -1,0 +1,149 @@
+unit View.mensagens;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  View.base,
+  Vcl.ExtCtrls,
+  Vcl.StdCtrls,
+  Vcl.Buttons,
+  Vcl.Imaging.pngimage;
+
+type
+  TMyButtons = (mbSim, mbNao, mbOk);
+
+type
+  TViewMensagens = class(TViewBase)
+    pnlImagens: TPanel;
+    pnlConteudo: TPanel;
+    pnlTitulo: TPanel;
+    pnlBotoes: TPanel;
+    mmoTexto: TMemo;
+    lblTitulo: TLabel;
+    btnSim: TSpeedButton;
+    btnNao: TSpeedButton;
+    btnOk: TSpeedButton;
+    imgAlert: TImage;
+    imgInformation: TImage;
+    imgError: TImage;
+    procedure btnSimClick(Sender: TObject);
+    procedure btnNaoClick(Sender: TObject);
+    procedure btnOkClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    class function Mensagem(Titulo, Texto: string; Tipo: Char; Botoes: array of TMyButtons): Boolean;
+  end;
+
+var
+  ViewMensagens: TViewMensagens;
+
+implementation
+
+{$R *.dfm}
+
+uses View.fundo;
+{ TViewMensagens }
+
+procedure TViewMensagens.btnNaoClick(Sender: TObject);
+begin
+  inherited;
+  Self.ModalResult := mrNo;
+end;
+
+procedure TViewMensagens.btnOkClick(Sender: TObject);
+begin
+  inherited;
+  Self.ModalResult := mrOk;
+end;
+
+procedure TViewMensagens.btnSimClick(Sender: TObject);
+begin
+  inherited;
+  Self.ModalResult := mrYes;
+end;
+
+class function TViewMensagens.Mensagem(Titulo, Texto: string; Tipo: Char; Botoes: array of TMyButtons): Boolean;
+var
+  I: Integer;
+  View: TViewMensagens;
+begin
+
+  View := TViewMensagens.Create(nil);
+  try
+    View.lblTitulo.Caption := Titulo;
+    View.mmoTexto.Text := Texto;
+
+    //Tratamento dos botões
+    for I := 0 to Length(Botoes) - 1 do
+    begin
+      case (Botoes[I]) of
+        mbOk: begin
+                View.btnOk.Visible := True;
+                View.btnOk.Align := alRight;
+              end;
+
+        mbSim: begin
+                  View.btnSim.Visible := True;
+                  View.btnSim.Align := alRight;
+               end;
+
+        mbNao: begin
+                  View.btnNao.Visible := True;
+                  View.btnNao.Align := alRight;
+               end;
+
+         else begin
+            View.btnOk.Visible := True;
+            View.btnOk.Align := alRight;
+         end;
+      end;
+    end;
+
+    //Tipo das Imagens
+    case (Tipo) of
+      'I' : begin
+              View.imgInformation.Visible := True;
+            end;
+
+      'A' : begin
+              View.imgAlert.Visible := True;
+            end;
+
+      'E' : begin
+              View.imgError.Visible := True;
+            end;
+
+        else begin
+          View.imgInformation.Visible := True;
+        end;
+    end;
+
+    View.ShowModal;
+
+    case (View.ModalResult) of
+      mrOk, mrYes : Result := True;
+      else
+        Result := False;
+    end;
+
+  finally
+    if Assigned(view) then
+    begin
+      View.DisposeOf;
+    end;
+
+  end;
+
+end;
+
+end.

@@ -1,0 +1,23 @@
+MULTI - FILIAL
+
+PESSOAS 
+cliente
+endereço
+fornecedor 
+funcionarios
+
+ESTOQUE 
+Cadastro de produto 
+Grupos
+SubGrupos
+
+TRIBUTAÇÃO 
+Ncm
+Situação tributária 
+Cfop 
+
+FINANCEIRO
+Contas a Pagar 
+Contas a Receber 
+Movimento do Caixa
+

@@ -1,0 +1,26 @@
+inherited ViewFuncionarios: TViewFuncionarios
+  Caption = 'ViewFuncionarios'
+  TextHeight = 15
+  inherited pnlTopo: TPanel
+    inherited lblTitulo: TLabel
+      Width = 903
+      Height = 29
+      Caption = 'Funcion'#225'rios'
+      ExplicitWidth = 903
+    end
+  end
+  inherited pnlLinhadeFundo: TPanel
+    inherited CardPanelListas: TCardPanel
+      ActiveCard = CardCadastro
+      inherited CardCadastro: TCard
+        inherited pnlTituloCadastro: TPanel
+          inherited lblTituloCadastro: TLabel
+            Width = 234
+            Caption = 'Cadastro de Funcion'#225'rios'
+            ExplicitWidth = 234
+          end
+        end
+      end
+    end
+  end
+end

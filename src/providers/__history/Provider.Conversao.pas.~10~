@@ -1,0 +1,27 @@
+unit Provider.Conversao;
+
+interface
+
+uses
+  SysUtils,
+  StrUtils,
+  Classes;
+
+type
+
+  TPCPessoas = (TpClientes, TpFornecedores, TpFuncionarios);   //ENUM (ou seja cada posição vai representar um tipo de pessoa nesse caso
+
+function PessoasToInt(const ATipo: TPCPessoas): Integer;
+
+implementation
+
+function PessoasToInt(const ATipo: TPCPessoas): Integer;
+begin
+  case ATipo of
+    TpClientes:        Result := 1;
+    TpFornecedores:  Result := 2;
+    TpFuncionarios:   Result := 3;
+  end;
+end;
+
+end.

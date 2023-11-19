@@ -1,0 +1,128 @@
+unit View.clientes;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  View.base.lista,
+  Data.DB,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.StdCtrls,
+  Vcl.WinXCtrls,
+  Vcl.WinXPanels,
+  Vcl.Buttons,
+  Vcl.ExtCtrls,
+  Service.Cadastro,
+  Vcl.Mask,
+  Vcl.DBCtrls;
+
+type
+  TViewClientes = class(TViewBaseListas)
+    pnlTituloCadCliente: TPanel;
+    lblTituloCadastro: TLabel;
+    lblCod: TLabel;
+    lblNomeCliente: TLabel;
+    edtNomeCliente: TDBEdit;
+    lblFantasia: TLabel;
+    edtFantasia: TDBEdit;
+    lblTelefone: TLabel;
+    edtTelefone: TDBEdit;
+    lblCnpjCpf: TLabel;
+    edtCnpj: TDBEdit;
+    lblIeRg: TLabel;
+    edtIeRg: TDBEdit;
+    lblObs: TLabel;
+    edtObs: TDBEdit;
+    dbEdtCod: TDBText;
+    procedure btnEditarClick(Sender: TObject);
+    procedure btnNovoClick(Sender: TObject);
+    procedure btnSalvarClick(Sender: TObject);
+    procedure btnCancelarClick(Sender: TObject);
+    procedure btnExcluirClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+  private
+    { Private declarations }
+  public
+
+  end;
+
+var
+  ViewClientes: TViewClientes;
+
+implementation
+
+{$R *.dfm}
+
+uses Provider.Costantes;
+
+procedure TViewClientes.btnCancelarClick(Sender: TObject);
+begin
+  inherited;
+  if ServiceCadastro.Qry_Pessoas.State in dsEditModes then
+  begin
+    ServiceCadastro.Qry_Pessoas.Cancel;
+  end;
+
+  CardPanelListas.ActiveCard := CardPesquisa;
+end;
+
+procedure TViewClientes.btnEditarClick(Sender: TObject);
+begin
+  inherited;
+  CardPanelListas.ActiveCard := CardCadastro;
+  edtCnpj.SetFocus;
+  ServiceCadastro.Qry_Pessoas.Edit;
+end;
+
+procedure TViewClientes.btnExcluirClick(Sender: TObject);
+var
+  aviso: Integer;
+begin
+  inherited;
+  Application.Title := 'Atenção!';
+  aviso := MessageDlg('Deseja mesmo excluir o registro?', mtConfirmation,
+    [mbYes, mbNo], 0);
+  if aviso = mrYes then
+  begin
+    ServiceCadastro.Qry_Pessoas.Delete;
+  end;
+
+  CardPanelListas.ActiveCard := CardPesquisa;
+end;
+
+procedure TViewClientes.btnNovoClick(Sender: TObject);
+begin
+  inherited;
+  CardPanelListas.ActiveCard := CardCadastro;
+  edtCnpj.SetFocus;
+  ServiceCadastro.Qry_Pessoas.Insert;
+end;
+
+procedure TViewClientes.btnSalvarClick(Sender: TObject);
+begin
+  inherited;
+  if ServiceCadastro.Qry_Pessoas.State in dsEditModes then
+  begin
+    ServiceCadastro.Qry_PessoasTIPO_PESSOA.AsInteger := 1;
+    ServiceCadastro.Qry_Pessoas.Post;
+    ShowMessage('Cliente salvo com sucesso!');
+  end;
+  CardPanelListas.ActiveCard := CardPesquisa;
+end;
+
+procedure TViewClientes.FormShow(Sender: TObject);
+begin
+  inherited;
+  GetPessoas(1);
+end;
+
+end.

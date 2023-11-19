@@ -1,0 +1,66 @@
+inherited ViewFuncionarios: TViewFuncionarios
+  Caption = 'ViewFuncionarios'
+  OnCreate = FormCreate
+  TextHeight = 15
+  inherited pnlTopo: TPanel
+    inherited lblTitulo: TLabel
+      Width = 903
+      Height = 29
+      Caption = 'Funcion'#225'rios'
+      ExplicitWidth = 109
+    end
+  end
+  inherited pnlLinhadeFundo: TPanel
+    inherited CardPanelListas: TCardPanel
+      inherited CardPesquisa: TCard
+        inherited DBGridDados: TDBGrid
+          Columns = <
+            item
+              Expanded = False
+              FieldName = 'ID'
+              Title.Caption = 'C'#243'digo'
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'RAZAO'
+              Title.Caption = 'Nome Funcion'#225'rio'
+              Width = 350
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'TELEFONE'
+              Title.Caption = 'Telefone'
+              Width = 150
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'CNPJ_CPF'
+              Title.Caption = 'CPF'
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'IE_RG'
+              Title.Caption = 'RG'
+              Visible = True
+            end>
+        end
+      end
+      inherited CardCadastro: TCard
+        inherited pnlTituloCadastro: TPanel
+          inherited lblTituloCadastro: TLabel
+            Width = 234
+            Caption = 'Cadastro de Funcion'#225'rios'
+            ExplicitWidth = 234
+          end
+        end
+      end
+    end
+  end
+  inherited dsDados: TDataSource
+    DataSet = ServiceCadastro.Qry_Pessoas
+  end
+end

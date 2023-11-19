@@ -1,0 +1,298 @@
+unit View.vendas;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  View.base.lista,
+  Data.DB,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.StdCtrls,
+  Vcl.WinXCtrls,
+  Vcl.WinXPanels,
+  Vcl.Buttons,
+  Vcl.Imaging.pngimage,
+  Vcl.ExtCtrls,
+  Vcl.Mask,
+  Vcl.DBCtrls,
+  //dependencias Firedac
+  FireDAC.Stan.Intf,
+  FireDAC.Stan.Option,
+  FireDAC.Stan.Param,
+  FireDAC.Stan.Error,
+  FireDAC.DatS,
+  FireDAC.Phys.Intf,
+  FireDAC.DApt.Intf,
+  FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client;
+
+type
+  TViewVendas = class(TViewBaseListas)
+    edtVendedor: TSearchBox;
+    edtDescriProd: TSearchBox;
+    lblEscolherProd: TLabel;
+    lblNomeVendor: TLabel;
+    lblQtd: TLabel;
+    lblSubTotal: TLabel;
+    lblVendedor: TLabel;
+    lblVlrUnitario: TLabel;
+    DBGridVendas: TDBGrid;
+    pnlTotais: TPanel;
+    lblTotalVenda: TLabel;
+    edtTotalVenda: TEdit;
+    dsItens: TDataSource;
+    edtQtd: TEdit;
+    edtSubTotal: TEdit;
+    edtVlrUnitario: TEdit;
+    btnSalvarVenda: TSpeedButton;
+    FDMemTable1: TFDMemTable;
+    FDMemTable1ID_ESTOQUE: TIntegerField;
+    FDMemTable1ID_PRODUTO: TIntegerField;
+    FDMemTable1VALOR_UNITARIO: TCurrencyField;
+    FDMemTable1QTDE: TFloatField;
+    FDMemTable1DESCONTO: TCurrencyField;
+    FDMemTable1SUBTOTAL: TCurrencyField;
+    procedure edtVendedorExit(Sender: TObject);
+    procedure btnEditarClick(Sender: TObject);
+    procedure edtDescriProdInvokeSearch(Sender: TObject);
+    procedure btnSalvarVendaClick(Sender: TObject);
+    procedure edtVendedorInvokeSearch(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure btnNovoClick(Sender: TObject);
+    procedure btnSalvarClick(Sender: TObject);
+    procedure edtQtdExit(Sender: TObject);
+  private
+    function CalcValorTotalVenda: Double;
+    var
+      ModoEdicao: Boolean;
+  public
+    procedure GetSubTotal;
+    procedure ActiveButtons(AValue: Boolean);
+
+  end;
+
+
+var
+  ViewVendas: TViewVendas;
+
+implementation
+
+{$R *.dfm}
+
+uses
+  Provider.Costantes,
+  Service.Cadastro,
+  View.produtos,
+  View.funcionarios,
+  View.mensagens;
+
+procedure TViewVendas.ActiveButtons(AValue: Boolean);
+begin
+  btnNovo.Enabled     := AValue;
+  btnEditar.Enabled   := AValue;
+  btnCancelar.Enabled := not AValue;
+  btnSalvar.Enabled   := not AValue;
+end;
+
+procedure TViewVendas.btnEditarClick(Sender: TObject);
+begin       //EDITAR VENDA
+  ModoEdicao := True;
+  inherited;
+  edtTotalVenda.Text :=  FloatToStrF(TOTAL_VENDA, ffCurrency, 10,2);
+end;
+
+procedure TViewVendas.btnNovoClick(Sender: TObject);
+begin
+  inherited;
+  with ServiceCadastro.Qry_Estoque do
+  begin
+    FieldByName('TIPO').AsInteger   := 1;
+    FieldByName('DATA_').AsDateTime := Date;
+    FieldByName('HORA').AsDateTime  := Time;
+  end;
+end;
+
+procedure TViewVendas.btnSalvarClick(Sender: TObject);
+begin
+    //Atualizar Venda e recalcular o valor
+  ServiceCadastro.Qry_Estoque.Edit;
+  ServiceCadastro.Qry_EstoqueDESCONTO.AsFloat := 0;
+  ServiceCadastro.Qry_EstoqueVLR_TOTAL.AsFloat := CalcValorTotalVenda;
+  ServiceCadastro.Qry_Estoque.Post;
+
+  ViewMensagens.Mensagem('Sucesso','Venda salva com sucesso.', 'I', [mbOk]);
+  CardPanelListas.ActiveCard := CardPesquisa;
+end;
+
+procedure TViewVendas.btnSalvarVendaClick(Sender: TObject);
+begin
+  if FDMemTable1.IsEmpty then
+  begin
+    Exit;
+  end;
+
+  FDMemTable1.Edit;
+  FDMemTable1VALOR_UNITARIO.AsFloat := StrToFloatDef(edtVlrUnitario.Text, 0);
+  FDMemTable1QTDE.AsFloat           := StrToFloatDef(edtQtd.Text, 0);
+  FDMemTable1DESCONTO.AsFloat       := 0;
+  FDMemTable1SUBTOTAL.AsFloat       := StrToFloatDef(edtSubTotal.Text, 0);
+  FDMemTable1.Post;
+
+  FDMemTable1.First;
+  while not FDMemTable1.Eof do
+  begin
+    ServiceCadastro.Qry_Estoque_Item.Close;
+    ServiceCadastro.Qry_Estoque_Item.Open();
+    ServiceCadastro.Qry_Estoque_Item.Insert;
+    ServiceCadastro.Qry_Estoque_ItemID_ESTOQUE.AsInteger   := FDMemTable1ID_ESTOQUE.AsInteger;
+    ServiceCadastro.Qry_Estoque_ItemID_PRODUTO.AsInteger   := FDMemTable1ID_PRODUTO.AsInteger;
+    ServiceCadastro.Qry_Estoque_ItemQTDE.AsFloat           := FDMemTable1QTDE.AsFloat;
+    ServiceCadastro.Qry_Estoque_ItemVALOR_UNITARIO.AsFloat := FDMemTable1VALOR_UNITARIO.AsFloat;
+    ServiceCadastro.Qry_Estoque_ItemDESCONTO.AsFloat       := FDMemTable1DESCONTO.AsFloat;
+    ServiceCadastro.Qry_Estoque_ItemVALOR_TOTAL.AsFloat    := FDMemTable1SUBTOTAL.AsFloat;
+    ServiceCadastro.Qry_Estoque_Item.Post;
+
+    FDMemTable1.Next;
+  end;
+
+  GetVendaItens(ServiceCadastro.Qry_EstoqueID.AsInteger);  //ID do estoque (entrar no cabeçalho da venda)
+  edtTotalVenda.Text := ('R$: ' + FloatToStr(CalcValorTotalVenda));
+  FDMemTable1.EmptyDataSet;   //limpar dataset temporario
+  edtDescriProd.Clear;
+  edtQtd.Clear;
+  edtVlrUnitario.Clear;
+  edtSubTotal.Clear;
+  edtDescriProd.SetFocus;
+  ActiveButtons(False);
+end;
+
+function TViewVendas.CalcValorTotalVenda: Double;
+var
+  TotalVenda: Double;
+begin
+  TotalVenda := 0;
+
+  ServiceCadastro.Qry_Estoque_Item.DisableControls;
+  ServiceCadastro.Qry_Estoque_Item.First;
+
+  while not ServiceCadastro.Qry_Estoque_Item.Eof do
+  begin
+    TotalVenda := TotalVenda + ServiceCadastro.Qry_Estoque_ItemVALOR_TOTAL.AsFloat;
+    ServiceCadastro.Qry_Estoque_Item.Next;
+  end;
+
+  ServiceCadastro.Qry_Estoque_Item.EnableControls;
+  Result := Round(TotalVenda);
+end;
+
+procedure TViewVendas.edtDescriProdInvokeSearch(Sender: TObject);
+begin
+  ViewProdutos := TViewProdutos.Create(Self);
+  try
+    with ViewProdutos do
+    begin
+      DBGridDados.OnDblClick := nil; //desativando o dubleclick que só deve ficar na tela do produto
+      Top := ViewVendas.Top;
+      Left := ViewVendas.Left;   //recebendo as propriedades do position
+      btnNovo.Visible := False;
+      btnEditar.Visible := False;
+      btnCancelar.Visible := False;
+      btnSalvar.Visible := False;
+      btnExcluir.Visible := False;
+      pnlBotaoSelecionar.Visible := True;
+      ShowModal
+    end;
+
+    if ViewProdutos.ModalResult = mrOk then
+    begin
+      edtDescriProd.Text := ServiceCadastro.Qry_ProdutosNOME_PRODUTO.AsString;
+      edtVlrUnitario.Text := FloatToStr(ServiceCadastro.Qry_Produtos_DetalhesVENDA_APRAZO.AsFloat);
+      edtQtd.SetFocus;
+
+      FDMemTable1.Close;
+      FDMemTable1.Open;
+      FDMemTable1.Insert;
+      ServiceCadastro.Qry_Estoque.Refresh; //porque estava vindo -1 no insert após o refresh vem certo o valor
+      FDMemTable1ID_ESTOQUE.AsInteger      := ServiceCadastro.Qry_EstoqueID.AsInteger; //ACHO QUE PODE SER AQUI O ERRO OU TALVEZ É NO AUTOINCREMENT
+      FDMemTable1ID_PRODUTO.AsInteger      := ServiceCadastro.Qry_ProdutosID.AsInteger;
+    end;
+  finally
+    ViewProdutos.DisposeOf;
+  end;
+end;
+
+procedure TViewVendas.edtQtdExit(Sender: TObject);
+begin
+  inherited;
+   GetSubTotal;
+end;
+
+procedure TViewVendas.edtVendedorExit(Sender: TObject);
+begin
+  inherited;
+  if StrToIntDef(edtVendedor.Text, 0) > 0 then
+  begin
+    GetVendedor(StrToInt(edtVendedor.Text));
+    lblNomeVendor.Caption := SNome_Vendedor;
+    ServiceCadastro.Qry_EstoqueVENDEDOR.AsInteger := ICod_Vendedor;
+  end;
+
+end;
+
+procedure TViewVendas.edtVendedorInvokeSearch(Sender: TObject);
+begin
+  inherited;
+  ViewFuncionarios := TViewFuncionarios.Create(Self);
+  try
+    with ViewFuncionarios do
+    begin
+      Top := ViewVendas.Top;
+      Left := ViewVendas.Left;
+      btnNovo.Visible := False;
+      btnEditar.Visible := False;
+      btnCancelar.Visible := False;
+      btnSalvar.Visible := False;
+      btnExcluir.Visible := False;
+      pnlBotaoSelecionar.Visible := True;
+      ViewFuncionarios.ShowModal;
+
+      if ModalResult = mrOk then
+      begin
+        edtVendedor.Text := IntToStr(ServiceCadastro.Qry_PessoasID.AsInteger);
+        lblNomeVendor.Caption := ServiceCadastro.Qry_PessoasRAZAO.AsString;
+      end;
+
+    end;
+  finally
+   ViewFuncionarios.DisposeOf;
+  end;
+end;
+
+procedure TViewVendas.FormShow(Sender: TObject);
+begin
+  inherited;
+  GetVendas;
+end;
+
+procedure TViewVendas.GetSubTotal;
+var
+  SubTotal : Real;
+begin
+  if StrToFloatDef(edtQtd.text, 0) > 0 then
+  begin
+    SubTotal := StrToFloat(edtQtd.Text) * StrToFloat(edtVlrUnitario.Text);
+    edtSubTotal.Text := FloatToStr(SubTotal);
+  end;
+
+end;
+
+end.
