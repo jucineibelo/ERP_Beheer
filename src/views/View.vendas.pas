@@ -105,14 +105,18 @@ end;
 
 procedure TViewVendas.btnEditarClick(Sender: TObject);
 begin       //EDITAR VENDA
-  ClickEditMode := True;
   inherited;
+  ActiveButtons(False);
+  ClickEditMode := True;
   edtTotalVenda.Text :=  FloatToStrF(TOTAL_VENDA, ffCurrency, 10,2);
 end;
 
 procedure TViewVendas.btnNovoClick(Sender: TObject);
 begin
   inherited;
+  ActiveButtons(False);
+  ClickEditMode := False;
+
   with ServiceCadastro.Qry_Estoque do
   begin
     FieldByName('TIPO').AsInteger   := 1;
@@ -132,7 +136,6 @@ begin
   if ClickEditMode then
   begin
     UpdateCaixa(ServiceCadastro.Qry_EstoqueID.AsInteger, CalcValorTotalVenda);
-    ClickEditMode := False;
   end
   else
   begin
@@ -143,6 +146,7 @@ begin
 
   ViewMensagens.Mensagem('Sucesso','Venda salva com sucesso.', 'I', [mbOk]);
   CardPanelListas.ActiveCard := CardPesquisa;
+  ActiveButtons(True);
 end;
 
 procedure TViewVendas.btnSalvarVendaClick(Sender: TObject);

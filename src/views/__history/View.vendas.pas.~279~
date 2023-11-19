@@ -73,7 +73,7 @@ type
   private
     function CalcValorTotalVenda: Double;
     var
-      ModoEdicao: Boolean;
+      ClickEditMode: Boolean;
   public
     procedure GetSubTotal;
     procedure ActiveButtons(AValue: Boolean);
@@ -106,13 +106,17 @@ end;
 procedure TViewVendas.btnEditarClick(Sender: TObject);
 begin       //EDITAR VENDA
   inherited;
+  ActiveButtons(False);
+  ClickEditMode := True;
   edtTotalVenda.Text :=  FloatToStrF(TOTAL_VENDA, ffCurrency, 10,2);
 end;
 
 procedure TViewVendas.btnNovoClick(Sender: TObject);
 begin
-  ModoEdicao := True;
   inherited;
+  ActiveButtons(False);
+  ClickEditMode := False;
+
   with ServiceCadastro.Qry_Estoque do
   begin
     FieldByName('TIPO').AsInteger   := 1;
@@ -129,8 +133,21 @@ begin
   ServiceCadastro.Qry_EstoqueVLR_TOTAL.AsFloat := CalcValorTotalVenda;
   ServiceCadastro.Qry_Estoque.Post;
 
+  if ClickEditMode then
+  begin
+    UpdateCaixa(ServiceCadastro.Qry_EstoqueID.AsInteger, CalcValorTotalVenda);
+    ClickEditMode := False;
+  end
+  else
+  begin
+    PutCaixa(ServiceCadastro.Qry_EstoqueID.AsInteger,
+             'E', 'N. ' + ServiceCadastro.Qry_EstoqueID.AsString,
+             CalcValorTotalVenda);
+  end;
+
   ViewMensagens.Mensagem('Sucesso','Venda salva com sucesso.', 'I', [mbOk]);
   CardPanelListas.ActiveCard := CardPesquisa;
+  ActiveButtons(True);
 end;
 
 procedure TViewVendas.btnSalvarVendaClick(Sender: TObject);

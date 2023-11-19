@@ -3,6 +3,8 @@ inherited ViewVendas: TViewVendas
   TextHeight = 15
   inherited pnlTopo: TPanel
     inherited lblTitulo: TLabel
+      Width = 903
+      Height = 29
       Caption = 'Vendas'
       ExplicitWidth = 61
     end
@@ -76,6 +78,7 @@ inherited ViewVendas: TViewVendas
           Height = 201
           ExplicitHeight = 201
           inherited lblTituloCadastro: TLabel
+            Width = 741
             Height = 176
             Caption = 'Vendas'
             ExplicitWidth = 81
