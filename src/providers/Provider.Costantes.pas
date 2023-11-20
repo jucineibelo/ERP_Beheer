@@ -9,7 +9,7 @@ procedure GetProdutos_Detalhes(ACodigoProduto, ACodigoFilial: Integer); overload
 procedure GetVendedor(ACodigoVendedor: Integer);
 procedure GetVendas;
 procedure GetVendaItens(AcodidoVenda: Integer);
-procedure PutCaixa(AIdEstoque: Integer; ATipo, ADescricao: string; AValor: Double);
+procedure PutCaixa(AIdEstoque, AIdFormaPgto: Integer; ATipo, ADescricao: string; AValor: Double);
 procedure UpdateCaixa(AIdEstoque: Integer; AValor: Double);
 
 var
@@ -144,28 +144,31 @@ begin
   ServiceCadastro.Qry_Estoque_Item.EnableControls;
 end;
 
-procedure PutCaixa(AIdEstoque: Integer; ATipo, ADescricao: string; AValor: Double);
+procedure PutCaixa(AIdEstoque, AIdFormaPgto: Integer; ATipo, ADescricao: string; AValor: Double);
 begin
   with ServiceCadastro do
   begin
     Qry_Caixa.Close;
     Qry_Caixa.SQL.Clear;
     Qry_Caixa.SQL.Add(' INSERT INTO caixa (id_estoque, ' +
+                      ' id_forma_pgto,                 ' +
                       ' data_hora,                     ' +
                       ' tipo,                          ' +
                       ' valor,                         ' +
                       ' descricao)                     ' +
                       ' VALUES (:id,                   ' +
+                      ' :idFormaPgto,                  ' +
                       ' :datahora,                     ' +
                       ' :tipo,                         ' +
                       ' :valor,                        ' +
                       ' :descricao)                    '
                       );
-    Qry_Caixa.Params.ParamByName('id').AsInteger        := AIdEstoque;
-    Qry_Caixa.Params.ParamByName('datahora').AsDateTime := Now;
-    Qry_Caixa.Params.ParamByName('tipo').AsString       := 'E';
-    Qry_Caixa.Params.ParamByName('valor').AsFloat       := AValor;
-    Qry_Caixa.Params.ParamByName('descricao').AsString  := ADescricao;
+    Qry_Caixa.Params.ParamByName('id').AsInteger            := AIdEstoque;
+    Qry_Caixa.Params.ParamByName('idFormaPgto').AsInteger := AIdFormaPgto;
+    Qry_Caixa.Params.ParamByName('datahora').AsDateTime     := Now;
+    Qry_Caixa.Params.ParamByName('tipo').AsString           := 'E';
+    Qry_Caixa.Params.ParamByName('valor').AsFloat           := AValor;
+    Qry_Caixa.Params.ParamByName('descricao').AsString      := ADescricao;
     Qry_Caixa.ExecSQL;
   end;
 end;

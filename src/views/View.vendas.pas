@@ -24,7 +24,7 @@ uses
   Vcl.ExtCtrls,
   Vcl.Mask,
   Vcl.DBCtrls,
-  //dependencias Firedac
+  // dependencias Firedac
   FireDAC.Stan.Intf,
   FireDAC.Stan.Option,
   FireDAC.Stan.Param,
@@ -53,7 +53,6 @@ type
     edtQtd: TEdit;
     edtSubTotal: TEdit;
     edtVlrUnitario: TEdit;
-    btnSalvarVenda: TSpeedButton;
     FDMemTable1: TFDMemTable;
     FDMemTable1ID_ESTOQUE: TIntegerField;
     FDMemTable1ID_PRODUTO: TIntegerField;
@@ -61,6 +60,8 @@ type
     FDMemTable1QTDE: TFloatField;
     FDMemTable1DESCONTO: TCurrencyField;
     FDMemTable1SUBTOTAL: TCurrencyField;
+    pnlBotaoSalvarVenda: TPanel;
+    btnSalvarVenda: TSpeedButton;
     procedure edtVendedorExit(Sender: TObject);
     procedure btnEditarClick(Sender: TObject);
     procedure edtDescriProdInvokeSearch(Sender: TObject);
@@ -71,15 +72,15 @@ type
     procedure btnSalvarClick(Sender: TObject);
     procedure edtQtdExit(Sender: TObject);
   private
-    function CalcValorTotalVenda: Double;
-    var
-      ClickEditMode: Boolean;
+    FClickEditMode: Boolean;
+
   public
+    function CalcValorTotalVenda: Double;
     procedure GetSubTotal;
     procedure ActiveButtons(AValue: Boolean);
+    property ClickEditMode: Boolean read FClickEditMode write FClickEditMode;
 
   end;
-
 
 var
   ViewVendas: TViewVendas;
@@ -93,22 +94,24 @@ uses
   Service.Cadastro,
   View.produtos,
   View.funcionarios,
-  View.mensagens;
+  View.mensagens,
+  View.formaspgto,
+  View.fundo;
 
 procedure TViewVendas.ActiveButtons(AValue: Boolean);
 begin
-  btnNovo.Enabled     := AValue;
-  btnEditar.Enabled   := AValue;
+  btnNovo.Enabled := AValue;
+  btnEditar.Enabled := AValue;
   btnCancelar.Enabled := not AValue;
-  btnSalvar.Enabled   := not AValue;
+  btnSalvar.Enabled := not AValue;
 end;
 
 procedure TViewVendas.btnEditarClick(Sender: TObject);
-begin       //EDITAR VENDA
+begin // EDITAR VENDA
   inherited;
   ActiveButtons(False);
   ClickEditMode := True;
-  edtTotalVenda.Text :=  FloatToStrF(TOTAL_VENDA, ffCurrency, 10,2);
+  edtTotalVenda.Text := FloatToStrF(TOTAL_VENDA, ffCurrency, 10, 2);
 end;
 
 procedure TViewVendas.btnNovoClick(Sender: TObject);
@@ -119,32 +122,31 @@ begin
 
   with ServiceCadastro.Qry_Estoque do
   begin
-    FieldByName('TIPO').AsInteger   := 1;
+    FieldByName('TIPO').AsInteger := 1;
     FieldByName('DATA_').AsDateTime := Date;
-    FieldByName('HORA').AsDateTime  := Time;
+    FieldByName('HORA').AsDateTime := Time;
   end;
 end;
 
 procedure TViewVendas.btnSalvarClick(Sender: TObject);
 begin
-    //Atualizar Venda e recalcular o valor
+  // Atualizar Venda e recalcular o valor
   ServiceCadastro.Qry_Estoque.Edit;
   ServiceCadastro.Qry_EstoqueDESCONTO.AsFloat := 0;
   ServiceCadastro.Qry_EstoqueVLR_TOTAL.AsFloat := CalcValorTotalVenda;
   ServiceCadastro.Qry_Estoque.Post;
 
-  if ClickEditMode then
-  begin
-    UpdateCaixa(ServiceCadastro.Qry_EstoqueID.AsInteger, CalcValorTotalVenda);
-  end
-  else
-  begin
-    PutCaixa(ServiceCadastro.Qry_EstoqueID.AsInteger,
-             'E', 'N. ' + ServiceCadastro.Qry_EstoqueID.AsString,
-             CalcValorTotalVenda);
+  // Formas de Pagamento
+  ViewFormasPGTO := TViewFormasPGTO.Create(Self);
+  try
+    ViewFundo.Show;
+    ViewFormasPGTO.ValorVenda := CalcValorTotalVenda;
+    ViewFormasPGTO.ShowModal;
+  finally
+    ViewFundo.Hide;
+    ViewFormasPGTO.DisposeOf;
   end;
 
-  ViewMensagens.Mensagem('Sucesso','Venda salva com sucesso.', 'I', [mbOk]);
   CardPanelListas.ActiveCard := CardPesquisa;
   ActiveButtons(True);
 end;
@@ -158,9 +160,9 @@ begin
 
   FDMemTable1.Edit;
   FDMemTable1VALOR_UNITARIO.AsFloat := StrToFloatDef(edtVlrUnitario.Text, 0);
-  FDMemTable1QTDE.AsFloat           := StrToFloatDef(edtQtd.Text, 0);
-  FDMemTable1DESCONTO.AsFloat       := 0;
-  FDMemTable1SUBTOTAL.AsFloat       := StrToFloatDef(edtSubTotal.Text, 0);
+  FDMemTable1QTDE.AsFloat := StrToFloatDef(edtQtd.Text, 0);
+  FDMemTable1DESCONTO.AsFloat := 0;
+  FDMemTable1SUBTOTAL.AsFloat := StrToFloatDef(edtSubTotal.Text, 0);
   FDMemTable1.Post;
 
   FDMemTable1.First;
@@ -169,20 +171,21 @@ begin
     ServiceCadastro.Qry_Estoque_Item.Close;
     ServiceCadastro.Qry_Estoque_Item.Open();
     ServiceCadastro.Qry_Estoque_Item.Insert;
-    ServiceCadastro.Qry_Estoque_ItemID_ESTOQUE.AsInteger   := FDMemTable1ID_ESTOQUE.AsInteger;
-    ServiceCadastro.Qry_Estoque_ItemID_PRODUTO.AsInteger   := FDMemTable1ID_PRODUTO.AsInteger;
-    ServiceCadastro.Qry_Estoque_ItemQTDE.AsFloat           := FDMemTable1QTDE.AsFloat;
+    ServiceCadastro.Qry_Estoque_ItemID_ESTOQUE.AsInteger := FDMemTable1ID_ESTOQUE.AsInteger;
+    ServiceCadastro.Qry_Estoque_ItemID_PRODUTO.AsInteger := FDMemTable1ID_PRODUTO.AsInteger;
+    ServiceCadastro.Qry_Estoque_ItemQTDE.AsFloat := FDMemTable1QTDE.AsFloat;
     ServiceCadastro.Qry_Estoque_ItemVALOR_UNITARIO.AsFloat := FDMemTable1VALOR_UNITARIO.AsFloat;
-    ServiceCadastro.Qry_Estoque_ItemDESCONTO.AsFloat       := FDMemTable1DESCONTO.AsFloat;
-    ServiceCadastro.Qry_Estoque_ItemVALOR_TOTAL.AsFloat    := FDMemTable1SUBTOTAL.AsFloat;
+    ServiceCadastro.Qry_Estoque_ItemDESCONTO.AsFloat := FDMemTable1DESCONTO.AsFloat;
+    ServiceCadastro.Qry_Estoque_ItemVALOR_TOTAL.AsFloat := FDMemTable1SUBTOTAL.AsFloat;
     ServiceCadastro.Qry_Estoque_Item.Post;
 
     FDMemTable1.Next;
   end;
 
-  GetVendaItens(ServiceCadastro.Qry_EstoqueID.AsInteger);  //ID do estoque (entrar no cabeçalho da venda)
+  GetVendaItens(ServiceCadastro.Qry_EstoqueID.AsInteger);
+  // ID do estoque (entrar no cabeçalho da venda)
   edtTotalVenda.Text := ('R$: ' + FloatToStr(CalcValorTotalVenda));
-  FDMemTable1.EmptyDataSet;   //limpar dataset temporario
+  FDMemTable1.EmptyDataSet; // limpar dataset temporario
   edtDescriProd.Clear;
   edtQtd.Clear;
   edtVlrUnitario.Clear;
@@ -216,9 +219,10 @@ begin
   try
     with ViewProdutos do
     begin
-      DBGridDados.OnDblClick := nil; //desativando o dubleclick que só deve ficar na tela do produto
+      DBGridDados.OnDblClick := nil;
+      // desativando o dubleclick que só deve ficar na tela do produto
       Top := ViewVendas.Top;
-      Left := ViewVendas.Left;   //recebendo as propriedades do position
+      Left := ViewVendas.Left; // recebendo as propriedades do position
       btnNovo.Visible := False;
       btnEditar.Visible := False;
       btnCancelar.Visible := False;
@@ -230,16 +234,16 @@ begin
 
     if ViewProdutos.ModalResult = mrOk then
     begin
-      edtDescriProd.Text := ServiceCadastro.Qry_ProdutosNOME_PRODUTO.AsString;
+      edtDescriProd.Text  := ServiceCadastro.Qry_ProdutosNOME_PRODUTO.AsString;
       edtVlrUnitario.Text := FloatToStr(ServiceCadastro.Qry_Produtos_DetalhesVENDA_APRAZO.AsFloat);
       edtQtd.SetFocus;
 
       FDMemTable1.Close;
       FDMemTable1.Open;
       FDMemTable1.Insert;
-      ServiceCadastro.Qry_Estoque.Refresh; //porque estava vindo -1 no insert após o refresh vem certo o valor
-      FDMemTable1ID_ESTOQUE.AsInteger      := ServiceCadastro.Qry_EstoqueID.AsInteger; //ACHO QUE PODE SER AQUI O ERRO OU TALVEZ É NO AUTOINCREMENT
-      FDMemTable1ID_PRODUTO.AsInteger      := ServiceCadastro.Qry_ProdutosID.AsInteger;
+      ServiceCadastro.Qry_Estoque.Refresh; //estava vindo -1 no id do insert. após o refresh vem certo o valor
+      FDMemTable1ID_ESTOQUE.AsInteger := ServiceCadastro.Qry_EstoqueID.AsInteger;
+      FDMemTable1ID_PRODUTO.AsInteger := ServiceCadastro.Qry_ProdutosID.AsInteger;
     end;
   finally
     ViewProdutos.DisposeOf;
@@ -249,7 +253,7 @@ end;
 procedure TViewVendas.edtQtdExit(Sender: TObject);
 begin
   inherited;
-   GetSubTotal;
+  GetSubTotal;
 end;
 
 procedure TViewVendas.edtVendedorExit(Sender: TObject);
@@ -289,7 +293,7 @@ begin
 
     end;
   finally
-   ViewFuncionarios.DisposeOf;
+    ViewFuncionarios.DisposeOf;
   end;
 end;
 
@@ -301,9 +305,9 @@ end;
 
 procedure TViewVendas.GetSubTotal;
 var
-  SubTotal : Real;
+  SubTotal: Real;
 begin
-  if StrToFloatDef(edtQtd.text, 0) > 0 then
+  if StrToFloatDef(edtQtd.Text, 0) > 0 then
   begin
     SubTotal := StrToFloat(edtQtd.Text) * StrToFloat(edtVlrUnitario.Text);
     edtSubTotal.Text := FloatToStr(SubTotal);

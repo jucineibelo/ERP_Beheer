@@ -95,9 +95,6 @@ Coordinates=583,612,94,36
 [ServiceCadastro.Qry_Produtos]
 Coordinates=10,10,192,234
 
-[btnSalvarVenda]
-Coordinates=467,612,106,36
-
 [lblEscolherProd]
 Coordinates=940,254,105,58
 
@@ -171,5 +168,5 @@ Coordinates=181,612,66,36
 Coordinates=470,254,67,58
 
 []
-Coordinates=1040,948,91,36
+Coordinates=467,612,106,36
 

@@ -82,6 +82,7 @@ type
     Qry_FormaPagamento: TFDQuery;
     Qry_FormaPagamentoID: TIntegerField;
     Qry_FormaPagamentoDESCRICAO: TStringField;
+    Qry_CaixaID_FORMA_PGTO: TIntegerField;
     procedure Qry_ProdutosAfterScroll(DataSet: TDataSet);
     procedure Qry_EstoqueAfterScroll(DataSet: TDataSet);
   private
