@@ -6,7 +6,7 @@ inherited ViewClientes: TViewClientes
       Width = 903
       Height = 29
       Caption = 'Clientes'
-      ExplicitWidth = 68
+      ExplicitWidth = 903
     end
   end
   inherited pnlLinhadeFundo: TPanel
@@ -112,9 +112,10 @@ inherited ViewClientes: TViewClientes
         inherited pnlTituloCadastro: TPanel
           TabOrder = 6
           inherited lblTituloCadastro: TLabel
-            Width = 190
+            Width = 741
+            Height = 48
             Caption = 'Cadastro de Clientes'
-            ExplicitWidth = 190
+            ExplicitWidth = 741
           end
         end
         object edtNomeCliente: TDBEdit

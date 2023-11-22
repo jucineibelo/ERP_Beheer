@@ -75,8 +75,10 @@ type
     procedure dsDadosStateChange(Sender: TObject);
   private
   public
-  var
-    STela: string;
+    procedure DisableAllButtons(AValue: Boolean);
+    var
+      STela: string;
+
 
   end;
 
@@ -298,6 +300,20 @@ procedure TViewBaseListas.DBGridDadosDblClick(Sender: TObject);
 begin
   inherited;
   btnEditar.Click;
+end;
+
+procedure TViewBaseListas.DisableAllButtons(AValue: Boolean); //desativar todos os botões
+var
+I: Integer;
+begin
+  for i := 0 to ComponentCount - 1 do
+  begin
+    if Components[i] is TSpeedButton then
+      TSpeedButton(Components[i]).Visible := not AValue;
+  end;
+
+  pnlBotaoSelecionar.Visible := AValue;
+  btnSelecionar.Visible := AValue;
 end;
 
 procedure TViewBaseListas.dsDadosStateChange(Sender: TObject);

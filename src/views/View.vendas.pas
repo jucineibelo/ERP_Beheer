@@ -60,25 +60,33 @@ type
     FDMemTable1QTDE: TFloatField;
     FDMemTable1DESCONTO: TCurrencyField;
     FDMemTable1SUBTOTAL: TCurrencyField;
-    pnlBotaoSalvarVenda: TPanel;
-    btnSalvarVenda: TSpeedButton;
+    pnlBotaoAdicionar: TPanel;
+    btnAdicionar: TSpeedButton;
+    edtCodCliente: TSearchBox;
+    Label1: TLabel;
+    lblNomeCliente: TLabel;
     procedure edtVendedorExit(Sender: TObject);
     procedure btnEditarClick(Sender: TObject);
     procedure edtDescriProdInvokeSearch(Sender: TObject);
-    procedure btnSalvarVendaClick(Sender: TObject);
+    procedure btnAdicionarClick(Sender: TObject);
     procedure edtVendedorInvokeSearch(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnNovoClick(Sender: TObject);
     procedure btnSalvarClick(Sender: TObject);
     procedure edtQtdExit(Sender: TObject);
+    procedure edtCodClienteInvokeSearch(Sender: TObject);
+    procedure edtCodClienteExit(Sender: TObject);
   private
     FClickEditMode: Boolean;
-
+    FNomeCliente: String;
+    FIdCliente: Integer;
   public
     function CalcValorTotalVenda: Double;
     procedure GetSubTotal;
     procedure ActiveButtons(AValue: Boolean);
     property ClickEditMode: Boolean read FClickEditMode write FClickEditMode;
+    property NomeCliente: String read FNomeCliente;
+    property IdCliente: Integer read FIdCliente;
 
   end;
 
@@ -96,7 +104,9 @@ uses
   View.funcionarios,
   View.mensagens,
   View.formaspgto,
-  View.fundo;
+  View.fundo,
+  View.clientes,
+  Provider.Conversao;
 
 procedure TViewVendas.ActiveButtons(AValue: Boolean);
 begin
@@ -122,9 +132,9 @@ begin
 
   with ServiceCadastro.Qry_Estoque do
   begin
-    FieldByName('TIPO').AsInteger := 1;
-    FieldByName('DATA_').AsDateTime := Date;
-    FieldByName('HORA').AsDateTime := Time;
+    FieldByName('TIPO').AsInteger       := 1;
+    FieldByName('DATA_').AsDateTime     := Date;
+    FieldByName('HORA').AsDateTime      := Time;
   end;
 end;
 
@@ -132,8 +142,9 @@ procedure TViewVendas.btnSalvarClick(Sender: TObject);
 begin
   // Atualizar Venda e recalcular o valor
   ServiceCadastro.Qry_Estoque.Edit;
-  ServiceCadastro.Qry_EstoqueDESCONTO.AsFloat := 0;
-  ServiceCadastro.Qry_EstoqueVLR_TOTAL.AsFloat := CalcValorTotalVenda;
+  ServiceCadastro.Qry_EstoqueDESCONTO.AsFloat     := 0;
+  ServiceCadastro.Qry_EstoqueVLR_TOTAL.AsFloat    := CalcValorTotalVenda;
+  ServiceCadastro.Qry_EstoqueID_CLIENTE.AsInteger := IdCliente;
   ServiceCadastro.Qry_Estoque.Post;
 
   // Formas de Pagamento
@@ -151,7 +162,7 @@ begin
   ActiveButtons(True);
 end;
 
-procedure TViewVendas.btnSalvarVendaClick(Sender: TObject);
+procedure TViewVendas.btnAdicionarClick(Sender: TObject);
 begin
   if FDMemTable1.IsEmpty then
   begin
@@ -223,12 +234,7 @@ begin
       // desativando o dubleclick que só deve ficar na tela do produto
       Top := ViewVendas.Top;
       Left := ViewVendas.Left; // recebendo as propriedades do position
-      btnNovo.Visible := False;
-      btnEditar.Visible := False;
-      btnCancelar.Visible := False;
-      btnSalvar.Visible := False;
-      btnExcluir.Visible := False;
-      pnlBotaoSelecionar.Visible := True;
+      DisableAllButtons(True);
       ShowModal
     end;
 
@@ -277,12 +283,7 @@ begin
     begin
       Top := ViewVendas.Top;
       Left := ViewVendas.Left;
-      btnNovo.Visible := False;
-      btnEditar.Visible := False;
-      btnCancelar.Visible := False;
-      btnSalvar.Visible := False;
-      btnExcluir.Visible := False;
-      pnlBotaoSelecionar.Visible := True;
+      DisableAllButtons(True);
       ViewFuncionarios.ShowModal;
 
       if ModalResult = mrOk then
@@ -313,6 +314,48 @@ begin
     edtSubTotal.Text := FloatToStr(SubTotal);
   end;
 
+end;
+
+procedure TViewVendas.edtCodClienteExit(Sender: TObject);
+begin
+  inherited;
+  if StrToIntDef(edtCodCliente.Text, 0) > 0 then
+  begin
+    GetPessoas(StrToInt(edtCodCliente.Text));
+    lblNomeCliente.Caption := NomeCliente;
+    ServiceCadastro.Qry_EstoqueID_CLIENTE.AsInteger := IdCliente;
+  end;
+end;
+
+procedure TViewVendas.edtCodClienteInvokeSearch(Sender: TObject);
+begin
+  inherited;
+  ViewClientes := TViewClientes.Create(Self);
+  try
+    with ViewClientes do
+    begin
+      Top := ViewVendas.Top;
+      Left := ViewVendas.Left;
+      DisableAllButtons(True);
+      ViewClientes.Tag := PessoasToInt(TpClientes);
+      ViewClientes.ShowModal;
+
+      if ModalResult = mrOk then
+      begin
+        FIdCliente   := ServiceCadastro.Qry_PessoasID.AsInteger;
+        FNomeCliente := ServiceCadastro.Qry_PessoasRAZAO.AsString;
+      end;
+
+      if not FIdCliente <> 0 then
+      begin
+        edtCodCliente.Text     :=  FIdCliente.ToString;
+        lblNomeCliente.Caption := FNomeCliente;
+      end;
+
+    end;
+  finally
+    ViewFuncionarios.DisposeOf;
+  end;
 end;
 
 end.

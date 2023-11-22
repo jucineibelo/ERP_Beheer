@@ -1,13 +1,13 @@
 object ServiceCadastro: TServiceCadastro
-  Height = 506
-  Width = 383
+  Height = 508
+  Width = 359
   object Qry_Pessoas: TFDQuery
     Active = True
     Connection = ServiceConexao.FDCon
     SQL.Strings = (
       'select * from pessoa where id =:id')
     Left = 56
-    Top = 40
+    Top = 16
     ParamData = <
       item
         Name = 'ID'
@@ -63,7 +63,7 @@ object ServiceCadastro: TServiceCadastro
     SQL.Strings = (
       'select * from endereco where id = :id')
     Left = 56
-    Top = 112
+    Top = 80
     ParamData = <
       item
         Name = 'ID'
@@ -117,7 +117,7 @@ object ServiceCadastro: TServiceCadastro
     SQL.Strings = (
       'select * from produtos where id = :id')
     Left = 56
-    Top = 176
+    Top = 144
     ParamData = <
       item
         Name = 'ID'
@@ -170,8 +170,8 @@ object ServiceCadastro: TServiceCadastro
     Connection = ServiceConexao.FDCon
     SQL.Strings = (
       'select * from produtos_detalhes where id =:id')
-    Left = 176
-    Top = 176
+    Left = 184
+    Top = 144
     ParamData = <
       item
         Name = 'ID'
@@ -227,14 +227,13 @@ object ServiceCadastro: TServiceCadastro
     end
   end
   object Qry_Estoque: TFDQuery
-    Active = True
     AfterScroll = Qry_EstoqueAfterScroll
     Connection = ServiceConexao.FDCon
     SQL.Strings = (
       'select * from estoque'
       '')
     Left = 56
-    Top = 248
+    Top = 208
     object Qry_EstoqueID: TIntegerField
       AutoGenerateValue = arAutoInc
       FieldName = 'ID'
@@ -249,6 +248,10 @@ object ServiceCadastro: TServiceCadastro
     object Qry_EstoqueVENDEDOR: TIntegerField
       FieldName = 'VENDEDOR'
       Origin = 'VENDEDOR'
+    end
+    object Qry_EstoqueID_CLIENTE: TIntegerField
+      FieldName = 'ID_CLIENTE'
+      Origin = 'ID_CLIENTE'
     end
     object Qry_EstoqueDATA_: TDateField
       FieldName = 'DATA_'
@@ -276,8 +279,8 @@ object ServiceCadastro: TServiceCadastro
     Connection = ServiceConexao.FDCon
     SQL.Strings = (
       'select * from estoque_item')
-    Left = 176
-    Top = 248
+    Left = 184
+    Top = 208
     object Qry_Estoque_ItemID: TIntegerField
       AutoGenerateValue = arAutoInc
       FieldName = 'ID'
@@ -319,12 +322,13 @@ object ServiceCadastro: TServiceCadastro
     end
   end
   object Qry_Caixa: TFDQuery
-    Active = True
     Connection = ServiceConexao.FDCon
     SQL.Strings = (
-      'select * from caixa')
+      'select c.*, f.descricao as Desc_Forma_Pag from caixa c'
+      'inner join formas_pagamento f on (f.id = c.id_forma_pgto)'
+      'order by id desc')
     Left = 56
-    Top = 336
+    Top = 272
     object Qry_CaixaID: TIntegerField
       AutoGenerateValue = arAutoInc
       FieldName = 'ID'
@@ -353,6 +357,7 @@ object ServiceCadastro: TServiceCadastro
     object Qry_CaixaVALOR: TFMTBCDField
       FieldName = 'VALOR'
       Origin = 'VALOR'
+      currency = True
       Precision = 18
       Size = 2
     end
@@ -361,13 +366,21 @@ object ServiceCadastro: TServiceCadastro
       Origin = 'DESCRICAO'
       Size = 200
     end
+    object Qry_CaixaDESC_FORMA_PAG: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'DESC_FORMA_PAG'
+      Origin = 'DESCRICAO'
+      ProviderFlags = []
+      ReadOnly = True
+      Size = 100
+    end
   end
   object Qry_FormaPagamento: TFDQuery
     Active = True
     Connection = ServiceConexao.FDCon
     SQL.Strings = (
       'select * from formas_pagamento order by id')
-    Left = 176
+    Left = 56
     Top = 336
     object Qry_FormaPagamentoID: TIntegerField
       AutoGenerateValue = arAutoInc
@@ -380,6 +393,89 @@ object ServiceCadastro: TServiceCadastro
       FieldName = 'DESCRICAO'
       Origin = 'DESCRICAO'
       Size = 100
+    end
+    object Qry_FormaPagamentoGERA_RECEBER: TStringField
+      FieldName = 'GERA_RECEBER'
+      Origin = 'GERA_RECEBER'
+      Size = 10
+    end
+  end
+  object Qry_Contas_Receber: TFDQuery
+    Connection = ServiceConexao.FDCon
+    SQL.Strings = (
+      'select * from contas_receber')
+    Left = 56
+    Top = 400
+    object Qry_Contas_ReceberID: TIntegerField
+      AutoGenerateValue = arAutoInc
+      FieldName = 'ID'
+      Origin = 'ID'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object Qry_Contas_ReceberID_CLIENTE: TIntegerField
+      FieldName = 'ID_CLIENTE'
+      Origin = 'ID_CLIENTE'
+    end
+    object Qry_Contas_ReceberDOCUMENTO: TStringField
+      FieldName = 'DOCUMENTO'
+      Origin = 'DOCUMENTO'
+      Size = 50
+    end
+    object Qry_Contas_ReceberVALOR: TFMTBCDField
+      FieldName = 'VALOR'
+      Origin = 'VALOR'
+      Precision = 18
+      Size = 2
+    end
+  end
+  object Qry_Contas_Rec_detalh: TFDQuery
+    Connection = ServiceConexao.FDCon
+    SQL.Strings = (
+      'select * from c_receber_detalh')
+    Left = 192
+    Top = 400
+    object Qry_Contas_Rec_detalhID: TIntegerField
+      AutoGenerateValue = arAutoInc
+      FieldName = 'ID'
+      Origin = 'ID'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object Qry_Contas_Rec_detalhDOCUMENTO: TStringField
+      FieldName = 'DOCUMENTO'
+      Origin = 'DOCUMENTO'
+      Size = 50
+    end
+    object Qry_Contas_Rec_detalhDATA: TDateField
+      FieldName = 'DATA'
+      Origin = '"DATA"'
+    end
+    object Qry_Contas_Rec_detalhVALOR: TFMTBCDField
+      FieldName = 'VALOR'
+      Origin = 'VALOR'
+      Precision = 18
+      Size = 2
+    end
+    object Qry_Contas_Rec_detalhPARCELA: TStringField
+      FieldName = 'PARCELA'
+      Origin = 'PARCELA'
+    end
+    object Qry_Contas_Rec_detalhDATA_VENCIMENTO: TDateField
+      FieldName = 'DATA_VENCIMENTO'
+      Origin = 'DATA_VENCIMENTO'
+    end
+    object Qry_Contas_Rec_detalhARECEBER: TFMTBCDField
+      FieldName = 'ARECEBER'
+      Origin = 'ARECEBER'
+      Precision = 18
+      Size = 2
+    end
+    object Qry_Contas_Rec_detalhSALDO: TFMTBCDField
+      FieldName = 'SALDO'
+      Origin = 'SALDO'
+      Precision = 18
+      Size = 2
     end
   end
 end

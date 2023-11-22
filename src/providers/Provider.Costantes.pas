@@ -11,6 +11,8 @@ procedure GetVendas;
 procedure GetVendaItens(AcodidoVenda: Integer);
 procedure PutCaixa(AIdEstoque, AIdFormaPgto: Integer; ATipo, ADescricao: string; AValor: Double);
 procedure UpdateCaixa(AIdEstoque: Integer; AValor: Double);
+procedure GetCaixa;
+procedure PutAReceber(AIdCliente: Integer; ADocumento: string; AValor: Double);
 
 var
   ICod_Filial: Integer;
@@ -145,7 +147,7 @@ begin
 end;
 
 procedure PutCaixa(AIdEstoque, AIdFormaPgto: Integer; ATipo, ADescricao: string; AValor: Double);
-begin
+begin  //FUNÇÃO QUE ALIMENTA OS DADOS DO CAIXA AO FECHAR UMA VENDA
   with ServiceCadastro do
   begin
     Qry_Caixa.Close;
@@ -174,7 +176,7 @@ begin
 end;
 
 procedure UpdateCaixa(AIdEstoque: Integer; AValor: Double);
-begin
+begin  //FUNÇÃO QUE ATUALIZA O VALOR DO CAIXA DE UM REGISTRO QUE É EDITADO
    with ServiceCadastro do
    begin
      Qry_Caixa.Close;
@@ -190,6 +192,88 @@ begin
     Qry_Caixa.Params.ParamByName('id').AsInteger        := AIdEstoque;
     Qry_Caixa.ExecSQL;
    end;
+end;
+
+procedure GetCaixa;
+begin // Função para buscar todos os registros do caixa
+  with ServiceCadastro.Qry_Caixa do
+  begin
+    Close;
+    SQL.Clear;
+    SQL.Add(' select c.*, f.descricao as Desc_Forma_Pag                 ' +
+            ' from caixa c                                              ' +
+            ' inner join formas_pagamento f on (f.id = c.id_forma_pgto) ' +
+            ' order by id desc                                          '
+            );
+    Open();
+  end;
+end;
+
+procedure PutAReceber(AIdCliente: Integer; ADocumento: string; AValor: Double);
+begin
+  with ServiceCadastro.Qry_Contas_Receber do
+  begin
+    Close;
+    SQL.Clear;
+    SQL.Add(' select * from contas_receber where documento = :doc');
+    Params[0].AsString := ADocumento;
+    Open();
+  end;
+
+  if  ServiceCadastro.Qry_Contas_Receber.RecordCount < 1 then
+  begin
+      //alimentar função do saldo a receber
+    with ServiceCadastro do
+    begin
+      Qry_Contas_Receber.Close;
+      Qry_Contas_Receber.SQL.Clear;
+      Qry_Contas_Receber.SQL.Add(' INSERT INTO contas_receber( ' +
+                                 ' id_cliente,                 ' +
+                                 ' documento,                  ' +
+                                 ' valor)                      ' +
+                                 ' VALUES(                     ' +
+                                 ' :idcliente,                 ' +
+                                 ' :documento,                 ' +
+                                 ' :valor)                     '
+                                 );
+      Qry_Contas_Receber.Params.ParamByName('idcliente').AsInteger := AIdCliente;
+      Qry_Contas_Receber.Params.ParamByName('documento').AsString  := ADocumento;
+      Qry_Contas_Receber.Params.ParamByName('valor').AsFloat       := AValor;
+      Qry_Contas_Receber.ExecSQL;
+     end;
+  end;
+
+  with ServiceCadastro do
+  begin
+    Qry_Contas_Rec_detalh.Close;
+    Qry_Contas_Rec_detalh.SQL.Clear;
+    Qry_Contas_Rec_detalh.SQL.Add(' INSERT INTO c_receber_detalh( ' +
+                                  ' documento,                    ' +
+                                  ' data,                         ' +
+                                  ' valor,                        ' +
+                                  ' parcela,                      ' +
+                                  ' data_vencimento,              ' +
+                                  ' areceber,                     ' +
+                                  ' saldo)                        ' +
+                                  ' VALUES(                       ' +
+                                  ' :documento,                   ' +
+                                  ' :data,                        ' +
+                                  ' :valor,                       ' +
+                                  ' :parcela,                     ' +
+                                  ' :data_vencimento,             ' +
+                                  ' :areceber,                    ' +
+                                  ' :saldo)                       '
+                                  );
+    Qry_Contas_Rec_detalh.Params.ParamByName('documento').AsString         := ADocumento;
+    Qry_Contas_Rec_detalh.Params.ParamByName('data').AsDateTime            := Now;
+    Qry_Contas_Rec_detalh.Params.ParamByName('valor').AsFloat              := AValor;
+    Qry_Contas_Rec_detalh.Params.ParamByName('parcela').AsFloat            := AValor;
+    Qry_Contas_Rec_detalh.Params.ParamByName('data_vencimento').AsDateTime := Now + 30;
+    Qry_Contas_Rec_detalh.Params.ParamByName('areceber').AsFloat           := 0;
+    Qry_Contas_Rec_detalh.Params.ParamByName('saldo').AsFloat              := AValor;
+    Qry_Contas_Rec_detalh.ExecSQL;
+  end;
+
 end;
 
 end.

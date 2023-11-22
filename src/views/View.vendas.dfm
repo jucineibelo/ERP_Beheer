@@ -76,16 +76,17 @@ inherited ViewVendas: TViewVendas
       inherited CardCadastro: TCard
         inherited pnlTituloCadastro: TPanel
           Height = 201
+          TabOrder = 1
           ExplicitHeight = 201
           inherited lblTituloCadastro: TLabel
             Width = 741
             Height = 176
-            Caption = 'Vendas'
+            Caption = '[ Vendas ]'
             ExplicitWidth = 741
           end
           object lblEscolherProd: TLabel [1]
             Left = 24
-            Top = 102
+            Top = 127
             Width = 133
             Height = 20
             Caption = 'Escolha um produto'
@@ -99,11 +100,11 @@ inherited ViewVendas: TViewVendas
             ParentFont = False
           end
           object lblNomeVendor: TLabel [2]
-            Left = 120
-            Top = 58
-            Width = 143
+            Left = 95
+            Top = 83
+            Width = 127
             Height = 20
-            Caption = '[ NOME VENDEDOR ]'
+            Caption = '[ Nome Vendedor ]'
             Color = clGray
             Font.Charset = ANSI_CHARSET
             Font.Color = clGray
@@ -116,8 +117,8 @@ inherited ViewVendas: TViewVendas
             ParentFont = False
           end
           object lblQtd: TLabel [3]
-            Left = 465
-            Top = 102
+            Left = 457
+            Top = 127
             Width = 29
             Height = 20
             Caption = 'QTD'
@@ -132,7 +133,7 @@ inherited ViewVendas: TViewVendas
           end
           object lblSubTotal: TLabel [4]
             Left = 659
-            Top = 102
+            Top = 127
             Width = 65
             Height = 20
             Caption = 'Sub. Total'
@@ -147,10 +148,10 @@ inherited ViewVendas: TViewVendas
           end
           object lblVendedor: TLabel [5]
             Left = 24
-            Top = 31
-            Width = 49
+            Top = 55
+            Width = 67
             Height = 20
-            Caption = 'C'#243'digo'
+            Caption = 'C'#243'd. Vend'
             Font.Charset = ANSI_CHARSET
             Font.Color = clGray
             Font.Height = -15
@@ -161,8 +162,8 @@ inherited ViewVendas: TViewVendas
             ParentFont = False
           end
           object lblVlrUnitario: TLabel [6]
-            Left = 556
-            Top = 102
+            Left = 552
+            Top = 127
             Width = 78
             Height = 20
             Caption = 'Vlr. Unit'#225'rio'
@@ -173,6 +174,38 @@ inherited ViewVendas: TViewVendas
             Font.Pitch = fpFixed
             Font.Style = []
             Font.Quality = fqDraft
+            ParentFont = False
+          end
+          object Label1: TLabel [7]
+            Left = 256
+            Top = 55
+            Width = 80
+            Height = 20
+            Caption = 'C'#243'd. Cliente'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clGray
+            Font.Height = -15
+            Font.Name = 'Segoe UI'
+            Font.Pitch = fpFixed
+            Font.Style = []
+            Font.Quality = fqDraft
+            ParentFont = False
+          end
+          object lblNomeCliente: TLabel [8]
+            Left = 326
+            Top = 83
+            Width = 109
+            Height = 20
+            Caption = '[ Nome Cliente ]'
+            Color = clGray
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clGray
+            Font.Height = -15
+            Font.Name = 'Segoe UI'
+            Font.Pitch = fpFixed
+            Font.Style = []
+            Font.Quality = fqDraft
+            ParentColor = False
             ParentFont = False
           end
           inherited pnlBtnVoltar: TPanel
@@ -187,49 +220,49 @@ inherited ViewVendas: TViewVendas
             end
           end
           object edtQtd: TEdit
-            Left = 465
-            Top = 128
+            Left = 457
+            Top = 153
             Width = 80
             Height = 23
             NumbersOnly = True
-            TabOrder = 1
+            TabOrder = 3
             OnExit = edtQtdExit
           end
           object edtSubTotal: TEdit
             Left = 659
-            Top = 128
+            Top = 153
             Width = 90
             Height = 23
             NumbersOnly = True
             ReadOnly = True
-            TabOrder = 2
+            TabOrder = 5
           end
           object edtVlrUnitario: TEdit
-            Left = 556
-            Top = 128
+            Left = 551
+            Top = 153
             Width = 90
             Height = 23
             NumbersOnly = True
             ReadOnly = True
-            TabOrder = 3
+            TabOrder = 4
             OnExit = edtQtdExit
           end
-          object pnlBotaoSalvarVenda: TPanel
+          object pnlBotaoAdicionar: TPanel
             Left = 768
-            Top = 128
+            Top = 153
             Width = 74
             Height = 23
             BevelOuter = bvNone
             Color = 16759413
             ParentBackground = False
-            TabOrder = 4
-            object btnSalvarVenda: TSpeedButton
+            TabOrder = 2
+            object btnAdicionar: TSpeedButton
               Left = 0
               Top = 0
               Width = 74
               Height = 23
               Align = alClient
-              Caption = 'Salvar'
+              Caption = 'Adicionar'
               Flat = True
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clWhite
@@ -237,28 +270,36 @@ inherited ViewVendas: TViewVendas
               Font.Name = 'Segoe UI Semibold'
               Font.Style = []
               ParentFont = False
-              OnClick = btnSalvarVendaClick
+              OnClick = btnAdicionarClick
+              ExplicitLeft = 8
               ExplicitTop = 8
-              ExplicitWidth = 68
-              ExplicitHeight = 21
             end
+          end
+          object edtCodCliente: TSearchBox
+            Left = 256
+            Top = 81
+            Width = 64
+            Height = 23
+            TabOrder = 1
+            OnExit = edtCodClienteExit
+            OnInvokeSearch = edtCodClienteInvokeSearch
           end
         end
         object edtVendedor: TSearchBox
-          Left = 24
-          Top = 57
-          Width = 73
+          Left = 25
+          Top = 81
+          Width = 64
           Height = 23
           BevelInner = bvNone
           BevelOuter = bvNone
           NumbersOnly = True
-          TabOrder = 1
+          TabOrder = 0
           OnExit = edtVendedorExit
           OnInvokeSearch = edtVendedorInvokeSearch
         end
         object edtDescriProd: TSearchBox
           Left = 24
-          Top = 128
+          Top = 153
           Width = 409
           Height = 23
           BevelInner = bvNone

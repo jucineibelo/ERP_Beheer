@@ -16,7 +16,8 @@ uses
   View.fundo in 'src\views\View.fundo.pas' {ViewFundo},
   View.funcionarios in 'src\views\View.funcionarios.pas' {ViewFuncionarios},
   View.vendas in 'src\views\View.vendas.pas' {ViewVendas},
-  View.formaspgto in 'src\views\View.formaspgto.pas' {ViewFormasPGTO};
+  View.formaspgto in 'src\views\View.formaspgto.pas' {ViewFormasPGTO},
+  View.caixa in 'src\views\View.caixa.pas' {ViewCaixa};
 
 {$R *.res}
 
@@ -35,5 +36,6 @@ begin
   Application.CreateForm(TViewFuncionarios, ViewFuncionarios);
   Application.CreateForm(TViewVendas, ViewVendas);
   Application.CreateForm(TViewFormasPGTO, ViewFormasPGTO);
+  Application.CreateForm(TViewCaixa, ViewCaixa);
   Application.Run;
 end.

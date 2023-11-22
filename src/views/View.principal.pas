@@ -97,7 +97,8 @@ uses
   Provider.Conversao,
   View.produtos,
   View.funcionarios,
-  View.vendas;
+  View.vendas,
+  View.caixa;
 
 procedure TViewPrincipal.AjustarFormCenter(ViewForm: TForm);
 begin
@@ -108,6 +109,13 @@ end;
 procedure TViewPrincipal.btnCaixaClick(Sender: TObject);
 begin
   GetLineMenu(Sender);
+  ViewCaixa := TViewCaixa.Create(Self);
+  try
+    AjustarFormCenter(ViewCaixa);
+    ViewCaixa.ShowModal;
+  finally
+    ViewCaixa.DisposeOf;
+  end;
 end;
 
 procedure TViewPrincipal.btnConfiguracoesClick(Sender: TObject);

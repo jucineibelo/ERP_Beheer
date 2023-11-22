@@ -19,9 +19,16 @@ uses
   Vcl.StdCtrls,
   Data.DB,
   Vcl.Grids,
-  Vcl.DBGrids, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
-  FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
-  FireDAC.Comp.DataSet, FireDAC.Comp.Client;
+  Vcl.DBGrids,
+  FireDAC.Stan.Intf,
+  FireDAC.Stan.Option,
+  FireDAC.Stan.Param,
+  FireDAC.Stan.Error,
+  FireDAC.DatS,
+  FireDAC.Phys.Intf,
+  FireDAC.DApt.Intf,
+  FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client;
 
 type
   TViewFormasPGTO = class(TViewBase)
@@ -57,6 +64,9 @@ type
     pnlBotaoOk: TPanel;
     btnOk: TSpeedButton;
     edtValorPFaturar: TEdit;
+    FDMemFormasPgtoGERA_RECEBER: TStringField;
+    FDMemFormasPgtoID_CLIENTE: TIntegerField;
+    FDMemFormasPgtoDOCUMENTO: TStringField;
     procedure btnSairClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnSalvarClick(Sender: TObject);
@@ -80,7 +90,8 @@ uses
   Service.Cadastro,
   View.vendas,
   Provider.Costantes,
-  View.mensagens, View.fundo;
+  View.mensagens,
+  View.fundo;
 
 procedure TViewFormasPGTO.btnOkClick(Sender: TObject);
 var
@@ -93,6 +104,9 @@ begin
   FDMemFormasPgtoID_FORMA_PGTO.AsInteger := ServiceCadastro.Qry_FormaPagamentoID.AsInteger;
   FDMemFormasPgtoVALOR_PGTO.AsFloat      := StrToFloatDef(edtValorPFaturar.Text, 0);
   FDMemFormasPgtoDESCR_PGTO.AsString     := ServiceCadastro.Qry_FormaPagamentoDESCRICAO.AsString;
+  FDMemFormasPgtoGERA_RECEBER.AsString   := ServiceCadastro.Qry_FormaPagamentoGERA_RECEBER.AsString;
+  FDMemFormasPgtoID_CLIENTE.AsInteger    := ViewVendas.IdCliente;
+  FDMemFormasPgtoDOCUMENTO.AsString      := ServiceCadastro.Qry_EstoqueID.AsString;
   FDMemFormasPgto.Post;
 
   //calculando a diferença
@@ -115,19 +129,30 @@ procedure TViewFormasPGTO.btnSalvarClick(Sender: TObject);
 begin
   while not FDMemFormasPgto.Eof do
   begin
-     //Alimentar caixa ou atualizar
+    // atualizar caixa
     if ViewVendas.ClickEditMode then
     begin
-      UpdateCaixa(ServiceCadastro.Qry_EstoqueID.AsInteger, ViewVendas.CalcValorTotalVenda);
+      UpdateCaixa(ServiceCadastro.Qry_EstoqueID.AsInteger,
+                  FDMemFormasPgtoVALOR_PGTO.AsFloat);
     end
     else
     begin
+      //gravar caixa
       PutCaixa(ServiceCadastro.Qry_EstoqueID.AsInteger,
-               ServiceCadastro.Qry_FormaPagamentoID.AsInteger,
+               FDMemFormasPgtoID_FORMA_PGTO.AsInteger,
                'E',
                'N. ' + ServiceCadastro.Qry_EstoqueID.AsString,
-               ViewVendas.CalcValorTotalVenda);
+               FDMemFormasPgtoVALOR_PGTO.AsFloat);
     end;
+
+    //gravar o gera a receber caso não seja avista
+    if FDMemFormasPgtoGERA_RECEBER.AsString = 'S' then
+    begin
+      PutAReceber(FDMemFormasPgtoID_CLIENTE.AsInteger,
+                  FDMemFormasPgtoDOCUMENTO.AsString,
+                  FDMemFormasPgtoVALOR_PGTO.AsFloat);
+    end;
+
     FDMemFormasPgto.Next;
   end;
 

@@ -23,7 +23,8 @@ uses
   Vcl.ExtCtrls,
   Service.Cadastro,
   Vcl.Mask,
-  Vcl.DBCtrls, Vcl.Imaging.pngimage;
+  Vcl.DBCtrls,
+  Vcl.Imaging.pngimage;
 
 type
   TViewClientes = class(TViewBaseListas)
