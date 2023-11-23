@@ -6,7 +6,7 @@ inherited ViewVendas: TViewVendas
       Width = 903
       Height = 29
       Caption = 'Vendas'
-      ExplicitWidth = 903
+      ExplicitWidth = 61
     end
   end
   inherited pnlRodape: TPanel
@@ -82,7 +82,7 @@ inherited ViewVendas: TViewVendas
             Width = 741
             Height = 176
             Caption = '[ Vendas ]'
-            ExplicitWidth = 741
+            ExplicitWidth = 113
           end
           object lblEscolherProd: TLabel [1]
             Left = 24

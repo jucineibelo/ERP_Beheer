@@ -17,25 +17,19 @@ uses
   View.funcionarios in 'src\views\View.funcionarios.pas' {ViewFuncionarios},
   View.vendas in 'src\views\View.vendas.pas' {ViewVendas},
   View.formaspgto in 'src\views\View.formaspgto.pas' {ViewFormasPGTO},
-  View.caixa in 'src\views\View.caixa.pas' {ViewCaixa};
+  View.caixa in 'src\views\View.caixa.pas' {ViewCaixa},
+  View.receber in 'src\views\View.receber.pas' {ViewAReceber};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TViewPrincipal, ViewPrincipal);
   Application.CreateForm(TServiceConexao, ServiceConexao);
   Application.CreateForm(TServiceCadastro, ServiceCadastro);
+  Application.CreateForm(TViewPrincipal, ViewPrincipal);
+  Application.CreateForm(TViewBase, ViewBase);
   Application.CreateForm(TViewBaseListas, ViewBaseListas);
-  Application.CreateForm(TViewClientes, ViewClientes);
-  Application.CreateForm(TViewFornecedores, ViewFornecedores);
-  Application.CreateForm(TViewProdutos, ViewProdutos);
-  Application.CreateForm(TViewMensagens, ViewMensagens);
   Application.CreateForm(TViewFundo, ViewFundo);
-  Application.CreateForm(TViewFuncionarios, ViewFuncionarios);
-  Application.CreateForm(TViewVendas, ViewVendas);
-  Application.CreateForm(TViewFormasPGTO, ViewFormasPGTO);
-  Application.CreateForm(TViewCaixa, ViewCaixa);
   Application.Run;
 end.

@@ -1,0 +1,67 @@
+inherited ViewAReceber: TViewAReceber
+  Caption = 'ViewAReceber'
+  TextHeight = 15
+  inherited pnlTopo: TPanel
+    inherited lblTitulo: TLabel
+      Width = 903
+      Height = 29
+      Caption = 'Contas a Receber'
+      ExplicitWidth = 903
+    end
+  end
+  inherited pnlLinhadeFundo: TPanel
+    inherited CardPanelListas: TCardPanel
+      ActiveCard = CardPesquisa
+      inherited CardPesquisa: TCard
+        inherited DBGridDados: TDBGrid
+          Columns = <
+            item
+              Expanded = False
+              FieldName = 'ID'
+              Title.Caption = 'C'#243'digo'
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'ID_CLIENTE'
+              Title.Caption = 'C'#243'd Cliente'
+              Width = 75
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'RAZAO'
+              Title.Caption = 'Nome Cliente'
+              Width = 300
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'DOCUMENTO'
+              Title.Caption = 'Documento'
+              Width = 250
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'VALOR'
+              Title.Caption = 'Valor'
+              Width = 150
+              Visible = True
+            end>
+        end
+      end
+      inherited CardCadastro: TCard
+        inherited pnlTituloCadastro: TPanel
+          inherited lblTituloCadastro: TLabel
+            Width = 741
+            Height = 48
+          end
+        end
+      end
+    end
+  end
+  inherited dsDados: TDataSource
+    DataSet = ServiceCadastro.Qry_Contas_Receber
+  end
+end

@@ -401,9 +401,12 @@ object ServiceCadastro: TServiceCadastro
     end
   end
   object Qry_Contas_Receber: TFDQuery
+    AfterScroll = Qry_Contas_ReceberAfterScroll
     Connection = ServiceConexao.FDCon
     SQL.Strings = (
-      'select * from contas_receber')
+      'select c.*, p.razao from contas_receber c'
+      'inner join pessoa p on p.id = c.id_cliente'
+      'order by id')
     Left = 56
     Top = 400
     object Qry_Contas_ReceberID: TIntegerField
@@ -417,6 +420,14 @@ object ServiceCadastro: TServiceCadastro
       FieldName = 'ID_CLIENTE'
       Origin = 'ID_CLIENTE'
     end
+    object Qry_Contas_ReceberRAZAO: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'RAZAO'
+      Origin = 'RAZAO'
+      ProviderFlags = []
+      ReadOnly = True
+      Size = 100
+    end
     object Qry_Contas_ReceberDOCUMENTO: TStringField
       FieldName = 'DOCUMENTO'
       Origin = 'DOCUMENTO'
@@ -425,11 +436,14 @@ object ServiceCadastro: TServiceCadastro
     object Qry_Contas_ReceberVALOR: TFMTBCDField
       FieldName = 'VALOR'
       Origin = 'VALOR'
+      currency = True
       Precision = 18
       Size = 2
     end
   end
   object Qry_Contas_Rec_detalh: TFDQuery
+    AutoCalcFields = False
+    IndexesActive = False
     Connection = ServiceConexao.FDCon
     SQL.Strings = (
       'select * from c_receber_detalh')
@@ -454,6 +468,7 @@ object ServiceCadastro: TServiceCadastro
     object Qry_Contas_Rec_detalhVALOR: TFMTBCDField
       FieldName = 'VALOR'
       Origin = 'VALOR'
+      currency = True
       Precision = 18
       Size = 2
     end
@@ -468,12 +483,14 @@ object ServiceCadastro: TServiceCadastro
     object Qry_Contas_Rec_detalhARECEBER: TFMTBCDField
       FieldName = 'ARECEBER'
       Origin = 'ARECEBER'
+      currency = True
       Precision = 18
       Size = 2
     end
     object Qry_Contas_Rec_detalhSALDO: TFMTBCDField
       FieldName = 'SALDO'
       Origin = 'SALDO'
+      currency = True
       Precision = 18
       Size = 2
     end

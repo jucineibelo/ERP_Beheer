@@ -160,6 +160,7 @@ begin
 
   CardPanelListas.ActiveCard := CardPesquisa;
   ActiveButtons(True);
+  ClearAllEdtis;
 end;
 
 procedure TViewVendas.btnAdicionarClick(Sender: TObject);
@@ -235,6 +236,7 @@ begin
       Top := ViewVendas.Top;
       Left := ViewVendas.Left; // recebendo as propriedades do position
       DisableAllButtons(True);
+      ButtonSelecionar(True);
       ShowModal
     end;
 
@@ -284,6 +286,7 @@ begin
       Top := ViewVendas.Top;
       Left := ViewVendas.Left;
       DisableAllButtons(True);
+      ButtonSelecionar(True);
       ViewFuncionarios.ShowModal;
 
       if ModalResult = mrOk then
@@ -337,6 +340,7 @@ begin
       Top := ViewVendas.Top;
       Left := ViewVendas.Left;
       DisableAllButtons(True);
+      ButtonSelecionar(True);
       ViewClientes.Tag := PessoasToInt(TpClientes);
       ViewClientes.ShowModal;
 

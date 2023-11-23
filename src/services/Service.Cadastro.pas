@@ -100,8 +100,10 @@ type
     Qry_Contas_ReceberDOCUMENTO: TStringField;
     Qry_Contas_ReceberVALOR: TFMTBCDField;
     Qry_EstoqueID_CLIENTE: TIntegerField;
+    Qry_Contas_ReceberRAZAO: TStringField;
     procedure Qry_ProdutosAfterScroll(DataSet: TDataSet);
     procedure Qry_EstoqueAfterScroll(DataSet: TDataSet);
+    procedure Qry_Contas_ReceberAfterScroll(DataSet: TDataSet);
   private
     { Private declarations }
   public
@@ -121,14 +123,19 @@ uses
 
 {$R *.dfm}
 
+procedure TServiceCadastro.Qry_Contas_ReceberAfterScroll(DataSet: TDataSet);
+begin //buscar o documento na tabela C_Receber_detalh com o parametro da Contas a Receber
+  GetReceberParcela(Qry_Contas_ReceberDOCUMENTO.AsString);
+end;
+
 procedure TServiceCadastro.Qry_EstoqueAfterScroll(DataSet: TDataSet);
-begin
+begin //buscar o estoque na venda itens com o cód da venda
   GetVendaItens(Qry_EstoqueID.AsInteger);
 end;
 
 procedure TServiceCadastro.Qry_ProdutosAfterScroll(DataSet: TDataSet);
-begin //pegando os produtos detalhes
-  GetProdutos_Detalhes(ServiceCadastro.Qry_ProdutosID.AsInteger, ICod_Filial);
+begin //buscar os produtos detalhes
+  GetProdutos_Detalhes(Qry_ProdutosID.AsInteger, ICod_Filial);
 end;
 
 end.

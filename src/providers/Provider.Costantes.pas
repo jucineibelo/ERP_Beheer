@@ -13,6 +13,8 @@ procedure PutCaixa(AIdEstoque, AIdFormaPgto: Integer; ATipo, ADescricao: string;
 procedure UpdateCaixa(AIdEstoque: Integer; AValor: Double);
 procedure GetCaixa;
 procedure PutAReceber(AIdCliente: Integer; ADocumento: string; AValor: Double);
+procedure GetAReceber;
+procedure GetReceberParcela(AValue: string);
 
 var
   ICod_Filial: Integer;
@@ -27,7 +29,9 @@ uses
   Service.Cadastro,
   Provider.Conversao,
   View.mensagens,
-  System.SysUtils;
+  System.SysUtils,
+  VCL.Buttons,
+  System.Classes;
 
 procedure GetPessoas(ATipo: Integer);
 begin // Função para buscar uma pessoa passada por parametro
@@ -210,70 +214,87 @@ begin // Função para buscar todos os registros do caixa
 end;
 
 procedure PutAReceber(AIdCliente: Integer; ADocumento: string; AValor: Double);
+var
+  ValorTotal : Double;
+begin    //tentar montar igual do professor
+  with ServiceCadastro.Qry_Contas_Receber do
+  begin
+    Close;
+    SQL.Clear;
+    SQL.Add(' select c.*, p.razao from contas_receber c  ' +
+            ' inner join pessoa p on p.id = c.id_cliente ' +
+            ' where c.documento = :doc                   '+
+            ' order by id                                '
+            );
+    Params[0].AsString := ADocumento;
+    Open();
+  end;
+   //se já tiver registro  de Doc não utilize o script abaixo
+   //se for menor que 1 então não existe registro de documento ainda
+  if  ServiceCadastro.Qry_Contas_Receber.RecordCount < 1 then
+  begin
+  //alimentar a tabela Contas a receber cabeçalho
+    with ServiceCadastro.Qry_Contas_Receber do
+    begin
+      Close;
+      Open();
+      Insert;
+      FieldByName('id_cliente').AsInteger := AIdCliente;
+      FieldByName('documento').AsString   := ADocumento;
+      FieldByName('valor').AsFloat        := 0;
+      Post;
+     end;
+  end;
+
+   //alimentar a tabela Contas a receber detalhada
+  with ServiceCadastro.Qry_Contas_Rec_detalh do
+  begin
+    Close;
+    Open();
+    Insert;
+    FieldByName('documento').AsString         := ADocumento;
+    FieldByName('data').AsDateTime            := Now;
+    FieldByName('valor').AsFloat              := AValor;
+    FieldByName('parcela').AsFloat            := AValor;
+    FieldByName('data_vencimento').AsDateTime := Now + 30;;
+    FieldByName('areceber').AsFloat           := 0;
+    FieldByName('saldo').AsFloat              := AValor;;
+    Post;
+  end;
+
+  //Atualizar Valor do Cabeçalho **Qry_Contas_Receber**
+  ServiceCadastro.Qry_Contas_Receber.Edit;
+  ServiceCadastro.Qry_Contas_ReceberVALOR.AsFloat := ServiceCadastro.Qry_Contas_ReceberVALOR.AsFloat + AValor;
+  ServiceCadastro.Qry_Contas_Receber.Post;
+end;
+
+procedure GetAReceber;
 begin
   with ServiceCadastro.Qry_Contas_Receber do
   begin
     Close;
     SQL.Clear;
-    SQL.Add(' select * from contas_receber where documento = :doc');
-    Params[0].AsString := ADocumento;
+    SQL.Add(' select c.*, p.razao                        ' +
+            ' 	from contas_receber c                    ' +
+            ' inner join pessoa p on p.id = c.id_cliente ' +
+            ' order by id                                '
+           );
+    Open();
+  end;
+end;
+
+procedure GetReceberParcela(AValue : string);
+begin
+  with ServiceCadastro.Qry_Contas_Rec_detalh do
+  begin
+    Close;
+    SQL.Clear;
+    SQL.Add('select * from c_receber_detalh c where c.documento = :doc');
+    Params[0].AsString := AValue;
     Open();
   end;
 
-  if  ServiceCadastro.Qry_Contas_Receber.RecordCount < 1 then
-  begin
-      //alimentar função do saldo a receber
-    with ServiceCadastro do
-    begin
-      Qry_Contas_Receber.Close;
-      Qry_Contas_Receber.SQL.Clear;
-      Qry_Contas_Receber.SQL.Add(' INSERT INTO contas_receber( ' +
-                                 ' id_cliente,                 ' +
-                                 ' documento,                  ' +
-                                 ' valor)                      ' +
-                                 ' VALUES(                     ' +
-                                 ' :idcliente,                 ' +
-                                 ' :documento,                 ' +
-                                 ' :valor)                     '
-                                 );
-      Qry_Contas_Receber.Params.ParamByName('idcliente').AsInteger := AIdCliente;
-      Qry_Contas_Receber.Params.ParamByName('documento').AsString  := ADocumento;
-      Qry_Contas_Receber.Params.ParamByName('valor').AsFloat       := AValor;
-      Qry_Contas_Receber.ExecSQL;
-     end;
-  end;
-
-  with ServiceCadastro do
-  begin
-    Qry_Contas_Rec_detalh.Close;
-    Qry_Contas_Rec_detalh.SQL.Clear;
-    Qry_Contas_Rec_detalh.SQL.Add(' INSERT INTO c_receber_detalh( ' +
-                                  ' documento,                    ' +
-                                  ' data,                         ' +
-                                  ' valor,                        ' +
-                                  ' parcela,                      ' +
-                                  ' data_vencimento,              ' +
-                                  ' areceber,                     ' +
-                                  ' saldo)                        ' +
-                                  ' VALUES(                       ' +
-                                  ' :documento,                   ' +
-                                  ' :data,                        ' +
-                                  ' :valor,                       ' +
-                                  ' :parcela,                     ' +
-                                  ' :data_vencimento,             ' +
-                                  ' :areceber,                    ' +
-                                  ' :saldo)                       '
-                                  );
-    Qry_Contas_Rec_detalh.Params.ParamByName('documento').AsString         := ADocumento;
-    Qry_Contas_Rec_detalh.Params.ParamByName('data').AsDateTime            := Now;
-    Qry_Contas_Rec_detalh.Params.ParamByName('valor').AsFloat              := AValor;
-    Qry_Contas_Rec_detalh.Params.ParamByName('parcela').AsFloat            := AValor;
-    Qry_Contas_Rec_detalh.Params.ParamByName('data_vencimento').AsDateTime := Now + 30;
-    Qry_Contas_Rec_detalh.Params.ParamByName('areceber').AsFloat           := 0;
-    Qry_Contas_Rec_detalh.Params.ParamByName('saldo').AsFloat              := AValor;
-    Qry_Contas_Rec_detalh.ExecSQL;
-  end;
-
 end;
+
 
 end.

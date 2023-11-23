@@ -75,7 +75,9 @@ type
     procedure dsDadosStateChange(Sender: TObject);
   private
   public
+    procedure ClearAllEdtis;
     procedure DisableAllButtons(AValue: Boolean);
+    procedure ButtonSelecionar(AValue : Boolean);
     var
       STela: string;
 
@@ -241,30 +243,6 @@ begin
           end;
       end;
     end;
-
-//    else begin
-//      DSDados.DataSet.Post;
-//
-//      if STela = TelasToInt(TpProdutos) then
-//      begin
-//        ViewMensagens.Mensagem('Salvar','Produto salvo com sucesso.', 'I', [mbOk]);
-//      end;
-//
-//      if STela = TelasToInt(TpCaixa) then
-//      begin
-//        ViewMensagens.Mensagem('Salvar','Caixa salvo com sucesso.', 'I', [mbOk]);
-//      end;
-//
-//      if STela = TelasToInt(TpGrupo) then
-//      begin
-//        ViewMensagens.Mensagem('Salvar','Grupo salvo com sucesso.', 'I', [mbOk]);
-//      end;
-//
-//      if STela = TelasToInt(TpSubGrupo) then
-//      begin
-//        ViewMensagens.Mensagem('Salvar','Subgrupo salvo com sucesso.', 'I', [mbOk]);
-//      end;
-//    end;
   end;
 
   CardPanelListas.ActiveCard := CardPesquisa;
@@ -282,6 +260,12 @@ begin
   CardPanelListas.ActiveCard := CardPesquisa;
 end;
 
+procedure TViewBaseListas.ButtonSelecionar(AValue: Boolean);
+begin
+  pnlBotaoSelecionar.Visible := AValue;
+  btnSelecionar.Visible      := AValue;
+end;
+
 procedure TViewBaseListas.CardPanelListasCardChange(Sender: TObject;
   PrevCard, NextCard: TCard);
 begin
@@ -296,6 +280,17 @@ begin
 
 end;
 
+procedure TViewBaseListas.ClearAllEdtis;
+var
+ I: Integer;
+begin
+  for I := 0 to ComponentCount -1 do
+  begin
+    if Components[I] is TSearchBox then
+      TSearchBox(Components[I]).Clear;
+  end;
+end;
+
 procedure TViewBaseListas.DBGridDadosDblClick(Sender: TObject);
 begin
   inherited;
@@ -306,14 +301,13 @@ procedure TViewBaseListas.DisableAllButtons(AValue: Boolean); //desativar todos 
 var
 I: Integer;
 begin
-  for i := 0 to ComponentCount - 1 do
+  for I := 0 to ComponentCount - 1 do
   begin
-    if Components[i] is TSpeedButton then
-      TSpeedButton(Components[i]).Visible := not AValue;
+    if Components[I] is TSpeedButton then
+      TSpeedButton(Components[I]).Visible := not AValue;
   end;
 
-  pnlBotaoSelecionar.Visible := AValue;
-  btnSelecionar.Visible := AValue;
+  btnSair.Visible            := AValue;
 end;
 
 procedure TViewBaseListas.dsDadosStateChange(Sender: TObject);

@@ -163,6 +163,10 @@
             <Form>ViewCaixa</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="src\views\View.receber.pas">
+            <Form>ViewAReceber</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

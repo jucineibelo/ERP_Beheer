@@ -62,6 +62,7 @@ type
     pnlConteudo: TPanel;
     imgPrincipal: TImage;
     btnFuncionarios: TSpeedButton;
+    btnReceber: TSpeedButton;
     btnVendas: TSpeedButton;
     procedure btnSairClick(Sender: TObject);
     procedure btnClientesClick(Sender: TObject);
@@ -74,11 +75,11 @@ type
     procedure imgUsuarioBrancaMouseEnter(Sender: TObject);
     procedure imgUsuarioLaranjaMouseLeave(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure btnVendasClick(Sender: TObject);
+    procedure btnReceberClick(Sender: TObject);
     procedure btnFuncionariosClick(Sender: TObject);
+    procedure btnVendasClick(Sender: TObject);
   private
     procedure GetLineMenu(Sender: TObject);
-
   public
     procedure AjustarFormCenter(ViewForm : TForm);
   end;
@@ -98,7 +99,8 @@ uses
   View.produtos,
   View.funcionarios,
   View.vendas,
-  View.caixa;
+  View.caixa,
+  View.receber;
 
 procedure TViewPrincipal.AjustarFormCenter(ViewForm: TForm);
 begin
@@ -112,6 +114,9 @@ begin
   ViewCaixa := TViewCaixa.Create(Self);
   try
     AjustarFormCenter(ViewCaixa);
+    ViewCaixa.DisableAllButtons(True);
+    ViewCaixa.ButtonSelecionar(False);
+    ViewCaixa.DBGridDados.OnDblClick := nil;
     ViewCaixa.ShowModal;
   finally
     ViewCaixa.DisposeOf;
@@ -170,12 +175,27 @@ end;
 procedure TViewPrincipal.btnVendasClick(Sender: TObject);
 begin
   GetLineMenu(Sender);
-   ViewVendas:= TViewVendas.Create(Self);
+  ViewVendas := TViewVendas.Create(Self);
   try
     AjustarFormCenter(ViewVendas);
     ViewVendas.ShowModal;
   finally
     ViewVendas.DisposeOf;
+  end;
+end;
+
+procedure TViewPrincipal.btnReceberClick(Sender: TObject);
+begin
+  GetLineMenu(Sender);
+  ViewAReceber:= TViewAReceber.Create(Self);
+  try
+    AjustarFormCenter(ViewAReceber);
+    ViewAReceber.DisableAllButtons(True);
+    ViewAReceber.ButtonSelecionar(False);
+    ViewAReceber.DBGridDados.OnDblClick := nil;
+    ViewAReceber.ShowModal;
+  finally
+    ViewAReceber.DisposeOf;
   end;
 end;
 
@@ -186,7 +206,7 @@ begin // Show
 end;
 
 procedure TViewPrincipal.GetLineMenu(Sender: TObject);
-begin
+begin   //Função do ShapeMenu
   ShapeMenu.Left := 0;
   ShapeMenu.Height := TSpeedButton(Sender).Height;
   ShapeMenu.Top := TSpeedButton(Sender).Top;

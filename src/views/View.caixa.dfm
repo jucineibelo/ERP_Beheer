@@ -11,7 +11,6 @@ inherited ViewCaixa: TViewCaixa
   end
   inherited pnlLinhadeFundo: TPanel
     inherited CardPanelListas: TCardPanel
-      ActiveCard = CardPesquisa
       inherited CardPesquisa: TCard
         inherited DBGridDados: TDBGrid
           Columns = <
@@ -65,6 +64,8 @@ inherited ViewCaixa: TViewCaixa
         end
       end
       inherited CardCadastro: TCard
+        CardVisible = False
+        Enabled = False
         inherited pnlTituloCadastro: TPanel
           inherited lblTituloCadastro: TLabel
             Width = 741
