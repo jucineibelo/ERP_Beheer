@@ -31,5 +31,6 @@ begin
   Application.CreateForm(TViewBase, ViewBase);
   Application.CreateForm(TViewBaseListas, ViewBaseListas);
   Application.CreateForm(TViewFundo, ViewFundo);
+  Application.CreateForm(TViewMensagens, ViewMensagens);
   Application.Run;
 end.
