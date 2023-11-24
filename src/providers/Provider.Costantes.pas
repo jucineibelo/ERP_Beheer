@@ -40,7 +40,7 @@ begin // Função para buscar uma pessoa passada por parametro
     Close;
     SQL.Clear;
     SQL.Add('select * from pessoa p where p.tipo_pessoa =:tipopessoa');
-    SQL.Add('order by id asc');
+    SQL.Add('order by id desc');
     Params[0].AsInteger := ATipo;
     Open();
   end;
@@ -52,7 +52,7 @@ begin // Função para buscar todos os produtos
   begin
     Close;
     SQL.Clear;
-    SQL.Add('select * from produtos order by id');
+    SQL.Add('select * from produtos order by id desc');
     Open();
   end;
 end;
@@ -115,7 +115,7 @@ begin
   begin
     Close;
     SQL.Clear;
-    SQL.Add('select * from estoque order by 1');
+    SQL.Add('select * from estoque order by 1 desc');
     Open();
   end;
 end;
@@ -224,7 +224,7 @@ begin    //tentar montar igual do professor
     SQL.Add(' select c.*, p.razao from contas_receber c  ' +
             ' inner join pessoa p on p.id = c.id_cliente ' +
             ' where c.documento = :doc                   '+
-            ' order by id                                '
+            ' order by id desc                           '
             );
     Params[0].AsString := ADocumento;
     Open();

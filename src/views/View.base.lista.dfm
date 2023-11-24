@@ -244,11 +244,10 @@ inherited ViewBaseListas: TViewBaseListas
     TabOrder = 1
     OnMouseDown = pnlRodapeMouseDown
     object btnExcluir: TSpeedButton
-      AlignWithMargins = True
-      Left = 743
-      Top = 3
+      Left = 746
+      Top = 0
       Width = 100
-      Height = 34
+      Height = 40
       Cursor = crHandPoint
       Align = alRight
       AllowAllUp = True
@@ -319,14 +318,14 @@ inherited ViewBaseListas: TViewBaseListas
         00FFFF00FFFF00FFFBCE9FFBCE9FFBCE9FFBCE9FFF00FFFF00FF}
       ParentFont = False
       OnClick = btnExcluirClick
-      ExplicitLeft = 949
+      ExplicitLeft = 176
+      ExplicitTop = 3
     end
     object btnSalvar: TSpeedButton
-      AlignWithMargins = True
-      Left = 637
-      Top = 3
+      Left = 646
+      Top = 0
       Width = 100
-      Height = 34
+      Height = 40
       Cursor = crHandPoint
       Align = alRight
       AllowAllUp = True
@@ -393,14 +392,14 @@ inherited ViewBaseListas: TViewBaseListas
         6666666666666666666666666666666666666666666666666666}
       ParentFont = False
       OnClick = btnSalvarClick
-      ExplicitLeft = 843
+      ExplicitLeft = 276
+      ExplicitTop = 3
     end
     object btnCancelar: TSpeedButton
-      AlignWithMargins = True
-      Left = 531
-      Top = 3
+      Left = 546
+      Top = 0
       Width = 100
-      Height = 34
+      Height = 40
       Cursor = crHandPoint
       Align = alRight
       AllowAllUp = True
@@ -467,14 +466,14 @@ inherited ViewBaseListas: TViewBaseListas
         5050505050505050505050505050505050505050505050505050}
       ParentFont = False
       OnClick = btnCancelarClick
-      ExplicitLeft = 737
+      ExplicitLeft = 276
+      ExplicitTop = 3
     end
     object btnEditar: TSpeedButton
-      AlignWithMargins = True
-      Left = 425
-      Top = 3
+      Left = 446
+      Top = 0
       Width = 100
-      Height = 34
+      Height = 40
       Cursor = crHandPoint
       Align = alRight
       AllowAllUp = True
@@ -541,19 +540,18 @@ inherited ViewBaseListas: TViewBaseListas
         2323232323232323232323232323232323232323232323232323}
       ParentFont = False
       OnClick = btnEditarClick
-      ExplicitLeft = 631
+      ExplicitLeft = 276
+      ExplicitTop = 3
     end
     object btnNovo: TSpeedButton
-      AlignWithMargins = True
-      Left = 319
-      Top = 3
+      Left = 346
+      Top = 0
       Width = 100
-      Height = 34
+      Height = 40
       Cursor = crHandPoint
       Align = alRight
       AllowAllUp = True
       GroupIndex = 1
-      Down = True
       Caption = 'Novo'
       Flat = True
       Font.Charset = ANSI_CHARSET
@@ -616,7 +614,8 @@ inherited ViewBaseListas: TViewBaseListas
         4D4D4D4D4D4D4D4D4D4D4D4D4D4D4D4D4D4D4D4D4D4D4D4D4D4D}
       ParentFont = False
       OnClick = btnNovoClick
-      ExplicitLeft = 525
+      ExplicitLeft = 276
+      ExplicitTop = 3
     end
     object pnlBotaoSelecionar: TPanel
       AlignWithMargins = True
@@ -707,8 +706,8 @@ inherited ViewBaseListas: TViewBaseListas
           00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
         ParentFont = False
         OnClick = btnSelecionarClick
-        ExplicitLeft = 16
-        ExplicitWidth = 124
+        ExplicitLeft = 56
+        ExplicitTop = 3
       end
     end
   end
@@ -733,7 +732,7 @@ inherited ViewBaseListas: TViewBaseListas
       Margins.Right = 1
       Margins.Bottom = 0
       Align = alClient
-      ActiveCard = CardCadastro
+      ActiveCard = CardPesquisa
       BevelOuter = bvNone
       Color = clWhite
       ParentBackground = False

@@ -36,7 +36,6 @@ type
     btnSalvar: TSpeedButton;
     btnCancelar: TSpeedButton;
     btnEditar: TSpeedButton;
-    btnNovo: TSpeedButton;
     pnlLinhadeFundo: TPanel;
     CardPanelListas: TCardPanel;
     CardPesquisa: TCard;
@@ -50,6 +49,7 @@ type
     lblTituloCadastro: TLabel;
     pnlBtnVoltar: TPanel;
     btnVoltarPesquisa: TSpeedButton;
+    btnNovo: TSpeedButton;
     pnlBotaoSelecionar: TPanel;
     btnSelecionar: TSpeedButton;
     procedure btnSairClick(Sender: TObject);
@@ -305,9 +305,10 @@ begin
   begin
     if Components[I] is TSpeedButton then
       TSpeedButton(Components[I]).Visible := not AValue;
+      TSpeedButton(Components[I]).Enabled := not AValue;
   end;
 
-  btnSair.Visible            := AValue;
+  btnSair.Visible := AValue;
 end;
 
 procedure TViewBaseListas.dsDadosStateChange(Sender: TObject);
@@ -318,7 +319,7 @@ begin
   btnSalvar.Enabled   := dsDados.State in [dsInsert, dsEdit];
   btnCancelar.Enabled := btnSalvar.Enabled;
   btnExcluir.Enabled  := btnEditar.Enabled;
-  end;
+end;
 
 procedure TViewBaseListas.FormShow(Sender: TObject);
 begin
