@@ -150,7 +150,7 @@ begin
     ViewFuncionarios.Tag := PessoasToInt(TpFuncionarios);
     ViewFuncionarios.ShowModal;
   finally
-
+    ViewFuncionarios.DisposeOf;
   end;
 end;
 
@@ -169,7 +169,7 @@ end;
 
 procedure TViewPrincipal.btnSairClick(Sender: TObject);
 begin
-  Application.Terminate;
+  Self.Close;
 end;
 
 procedure TViewPrincipal.btnVendasClick(Sender: TObject);

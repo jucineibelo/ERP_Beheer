@@ -3,15 +3,12 @@ inherited ViewAReceber: TViewAReceber
   TextHeight = 15
   inherited pnlTopo: TPanel
     inherited lblTitulo: TLabel
-      Width = 903
-      Height = 29
       Caption = 'Contas a Receber'
-      ExplicitWidth = 147
+      ExplicitWidth = 903
     end
   end
   inherited pnlLinhadeFundo: TPanel
     inherited CardPanelListas: TCardPanel
-      ActiveCard = CardPesquisa
       inherited CardPesquisa: TCard
         inherited DBGridDados: TDBGrid
           Height = 237
@@ -98,6 +95,7 @@ inherited ViewAReceber: TViewAReceber
               Expanded = False
               FieldName = 'PARCELA'
               Title.Caption = 'Parcela'
+              Width = 64
               Visible = True
             end
             item
@@ -111,12 +109,14 @@ inherited ViewAReceber: TViewAReceber
               Expanded = False
               FieldName = 'ARECEBER'
               Title.Caption = 'A Receber'
+              Width = 64
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'SALDO'
               Title.Caption = 'Saldo'
+              Width = 64
               Visible = True
             end>
         end
@@ -124,12 +124,6 @@ inherited ViewAReceber: TViewAReceber
       inherited CardCadastro: TCard
         CardVisible = False
         Enabled = False
-        inherited pnlTituloCadastro: TPanel
-          inherited lblTituloCadastro: TLabel
-            Width = 741
-            Height = 48
-          end
-        end
       end
     end
   end

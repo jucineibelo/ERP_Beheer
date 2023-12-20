@@ -112,6 +112,7 @@ begin
   //calculando a diferença
   Valor_Faturado        := StrToFloatDef(edtValorPFaturar.Text, 0);
   edtValorFaturado.Text := FloatToStr(Valor_Faturado + StrToFloatDef(edtValorFaturado.Text, 0));
+
   Valor_Restante        := FValorVenda - StrToFloatDef(edtValorFaturado.Text, 0);
   edtValorRestante.Text := FloatToStr(Valor_Restante);
 

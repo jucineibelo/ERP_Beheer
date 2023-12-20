@@ -129,6 +129,7 @@ begin
   inherited;
   ActiveButtons(False);
   ClickEditMode := False;
+  ClearAllEdtis;
 
   with ServiceCadastro.Qry_Estoque do
   begin
@@ -172,9 +173,9 @@ begin
 
   FDMemTable1.Edit;
   FDMemTable1VALOR_UNITARIO.AsFloat := StrToFloatDef(edtVlrUnitario.Text, 0);
-  FDMemTable1QTDE.AsFloat := StrToFloatDef(edtQtd.Text, 0);
-  FDMemTable1DESCONTO.AsFloat := 0;
-  FDMemTable1SUBTOTAL.AsFloat := StrToFloatDef(edtSubTotal.Text, 0);
+  FDMemTable1QTDE.AsFloat           := StrToFloatDef(edtQtd.Text, 0);
+  FDMemTable1DESCONTO.AsFloat       := 0;
+  FDMemTable1SUBTOTAL.AsFloat       := StrToFloatDef(edtSubTotal.Text, 0);
   FDMemTable1.Post;
 
   FDMemTable1.First;
@@ -183,25 +184,23 @@ begin
     ServiceCadastro.Qry_Estoque_Item.Close;
     ServiceCadastro.Qry_Estoque_Item.Open();
     ServiceCadastro.Qry_Estoque_Item.Insert;
-    ServiceCadastro.Qry_Estoque_ItemID_ESTOQUE.AsInteger := FDMemTable1ID_ESTOQUE.AsInteger;
-    ServiceCadastro.Qry_Estoque_ItemID_PRODUTO.AsInteger := FDMemTable1ID_PRODUTO.AsInteger;
-    ServiceCadastro.Qry_Estoque_ItemQTDE.AsFloat := FDMemTable1QTDE.AsFloat;
+    ServiceCadastro.Qry_Estoque_ItemID_ESTOQUE.AsInteger   := FDMemTable1ID_ESTOQUE.AsInteger;
+    ServiceCadastro.Qry_Estoque_ItemID_PRODUTO.AsInteger   := FDMemTable1ID_PRODUTO.AsInteger;
+    ServiceCadastro.Qry_Estoque_ItemQTDE.AsFloat           := FDMemTable1QTDE.AsFloat;
     ServiceCadastro.Qry_Estoque_ItemVALOR_UNITARIO.AsFloat := FDMemTable1VALOR_UNITARIO.AsFloat;
-    ServiceCadastro.Qry_Estoque_ItemDESCONTO.AsFloat := FDMemTable1DESCONTO.AsFloat;
-    ServiceCadastro.Qry_Estoque_ItemVALOR_TOTAL.AsFloat := FDMemTable1SUBTOTAL.AsFloat;
+    ServiceCadastro.Qry_Estoque_ItemDESCONTO.AsFloat       := FDMemTable1DESCONTO.AsFloat;
+    ServiceCadastro.Qry_Estoque_ItemVALOR_TOTAL.AsFloat    := FDMemTable1SUBTOTAL.AsFloat;
     ServiceCadastro.Qry_Estoque_Item.Post;
 
     FDMemTable1.Next;
   end;
 
-  GetVendaItens(ServiceCadastro.Qry_EstoqueID.AsInteger);
   // ID do estoque (entrar no cabeçalho da venda)
+  GetVendaItens(ServiceCadastro.Qry_EstoqueID.AsInteger);
+
   edtTotalVenda.Text := ('R$: ' + FloatToStr(CalcValorTotalVenda));
   FDMemTable1.EmptyDataSet; // limpar dataset temporario
-  edtDescriProd.Clear;
-  edtQtd.Clear;
-  edtVlrUnitario.Clear;
-  edtSubTotal.Clear;
+  ClearAllEdtis;            //limpar edits
   edtDescriProd.SetFocus;
   ActiveButtons(False);
 end;

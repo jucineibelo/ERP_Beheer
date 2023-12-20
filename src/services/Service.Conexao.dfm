@@ -5,12 +5,11 @@ object ServiceConexao: TServiceConexao
   object FDCon: TFDConnection
     Params.Strings = (
       
-        'Database=C:\Users\User-J\Desktop\Projetos Delphi\Delphi gov\ERP\' +
+        'Database=C:\Users\User-J\Desktop\Projetos Delphi\Delphi gov ERP\' +
         'banco de dados\DADOS.FDB'
       'User_Name=SYSDBA'
       'Password=masterkey'
       'DriverID=FB')
-    Connected = True
     LoginPrompt = False
     Left = 64
     Top = 56
@@ -25,7 +24,6 @@ object ServiceConexao: TServiceConexao
     Top = 144
   end
   object Qry_Filial: TFDQuery
-    Active = True
     Connection = FDCon
     SQL.Strings = (
       'select * from filial where id = :id')
